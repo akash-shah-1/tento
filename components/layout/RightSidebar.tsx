@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MoreVertical } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
@@ -8,7 +7,8 @@ import { HEALERS, TRENDING_TOPICS, UPCOMING_SESSIONS, CONVERSATIONS } from '../.
 export const RightSidebar: React.FC<{ setSelectedHealer: (h: any) => void, setView: (v: any) => void }> = ({ setSelectedHealer, setView }) => {
   return (
     <div className="hidden lg:block">
-      <div className="sticky top-[76px] h-[calc(100vh-88px)] overflow-y-auto no-scrollbar pl-2 space-y-6">
+      {/* Top is relative to the scroll container, not viewport */}
+      <div className="sticky top-6 h-[calc(100vh-120px)] overflow-y-auto no-scrollbar pl-2 space-y-6">
          
          {/* Upcoming Sessions */}
          <div className="pr-2">

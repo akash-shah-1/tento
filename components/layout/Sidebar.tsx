@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Users, Clock, Bookmark, Video as VideoIcon, Layout, Calendar } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
@@ -14,7 +13,8 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, setView }) => {
   return (
     <div className="hidden md:block">
-      <div className="sticky top-[76px] h-[calc(100vh-88px)] overflow-y-auto no-scrollbar pr-2">
+      {/* Top is relative to the scroll container, not viewport, so top-6 gives it margin */}
+      <div className="sticky top-6 h-[calc(100vh-120px)] overflow-y-auto no-scrollbar pr-2">
          <div className="mb-4">
            <SidebarItem 
              icon={null} 
