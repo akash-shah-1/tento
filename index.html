@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>HealSpace - Healing & Support Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+            },
+            colors: {
+              primary: {
+                DEFAULT: '#4A90E2',
+                50: '#EDF5FC',
+                100: '#DAEBF9',
+                200: '#B6D7F3',
+                300: '#91C3ED',
+                400: '#6DAFE7',
+                500: '#4A90E2', // Base
+                600: '#2A7BD9',
+                700: '#2060AA',
+                800: '#17457A',
+                900: '#0D2B4C',
+              },
+              secondary: {
+                DEFAULT: '#9B59B6',
+                50: '#F5EFF8',
+                100: '#EBDFF1',
+                500: '#9B59B6',
+                600: '#8E44AD',
+              },
+              accent: {
+                DEFAULT: '#27AE60',
+                500: '#27AE60',
+              },
+              background: '#F5F6F8',
+              surface: '#FFFFFF',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      body {
+        background-color: #F5F6F8;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        overflow-y: scroll; /* Always show scrollbar to prevent layout shift */
+      }
+
+      /* Custom Scrollbar Styling */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #F5F6F8;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #B6D7F3;
+        border-radius: 5px;
+        border: 2px solid #F5F6F8; /* Creates padding effect */
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #91C3ED;
+      }
+
+      /* Firefox */
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: #B6D7F3 #F5F6F8;
+      }
+
+      /* Utility to hide scrollbar but keep functionality if needed */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
