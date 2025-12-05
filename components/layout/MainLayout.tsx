@@ -14,9 +14,10 @@ interface MainLayoutProps {
   setView: (view: ViewState) => void;
   setSelectedHealer: (healer: any) => void;
   onSearch?: (query: string) => void;
+  onOpenCreatePost: () => void;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, setView, setSelectedHealer, onSearch }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, setView, setSelectedHealer, onSearch, onOpenCreatePost }) => {
   const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile' || currentView === 'settings' || currentView === 'search';
   
   const [isLoading, setIsLoading] = useState(true);
@@ -132,7 +133,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
       </div>
 
       {/* 3. Footer */}
-      <MobileBottomNav currentView={currentView} setView={setView} />
+      <MobileBottomNav currentView={currentView} setView={setView} onOpenCreatePost={onOpenCreatePost} />
     </div>
   );
 };

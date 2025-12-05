@@ -2,21 +2,34 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { StoriesBar } from '../components/stories/StoriesBar';
-import { CreatePost } from '../components/feed/CreatePost';
+import { CreatePost, SuggestedHealersRail } from '../components/Feed'; // Import from Feed
 import { PostCard } from '../components/feed/PostCard';
 import { CURRENT_USER } from '../data/index';
 import { usePosts } from '../hooks/usePosts';
 import { PostSkeleton } from '../components/common/LoadingStates';
 import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
+import { Healer } from '../types';
 
-export const Home: React.FC = () => {
-  const { posts, isLoading, isFetchingMore, addPost, reactToPost, deletePost, loadMorePosts } = usePosts(CURRENT_USER);
+interface HomeProps {
+  onOpenCreatePost: () => void;
+  onSelectHealer: (h: Healer) => void;
+}
+
+export const Home: React.FC<HomeProps> = ({ onOpenCreatePost, onSelectHealer }) => {
+  const { posts, isLoading, isFetchingMore, reactToPost, deletePost, loadMorePosts } = usePosts(CURRENT_USER);
   const triggerRef = useInfiniteScroll(loadMorePosts, isFetchingMore || isLoading);
 
   return (
     <>
       <StoriesBar />
-      <CreatePost onPostCreate={addPost} />
+      
+      {/* Mobile: Suggested Healers Rail */}
+      <SuggestedHealersRail onSelect={onSelectHealer} />
+
+      {/* Desktop: Create Post Input (Hidden on Mobile) */}
+      <div className="hidden md:block">
+        <CreatePost onClick={onOpenCreatePost} />
+      </div>
       
       <div className="space-y-4">
         {isLoading ? (

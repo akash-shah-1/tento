@@ -6,20 +6,23 @@ import { ViewState } from '../../types';
 interface NavProps {
   currentView: ViewState;
   setView: (view: ViewState) => void;
+  onOpenCreatePost: () => void;
 }
 
-export const MobileBottomNav: React.FC<NavProps> = ({ currentView, setView }) => {
+export const MobileBottomNav: React.FC<NavProps> = ({ currentView, setView, onOpenCreatePost }) => {
   return (
     <div className="md:hidden bg-white border-t border-gray-200 z-50 pb-safe shadow-[0_-1px_3px_rgba(0,0,0,0.05)] flex-shrink-0">
       <div className="flex justify-around items-center h-16">
         <MobileNavItem active={currentView === 'feed'} onClick={() => setView('feed')} icon={Home} label="Home" />
         <MobileNavItem active={currentView === 'healers'} onClick={() => setView('healers')} icon={Users} label="Healers" />
         <div className="flex flex-col items-center justify-center -mt-6">
-           <button className="bg-gradient-to-br from-primary-500 to-primary-600 text-white p-3.5 rounded-full shadow-lg shadow-primary-500/30 active:scale-95 transition-transform border-4 border-white">
+           <button 
+             onClick={onOpenCreatePost}
+             className="bg-gradient-to-br from-primary-500 to-primary-600 text-white p-3.5 rounded-full shadow-lg shadow-primary-500/30 active:scale-95 transition-transform border-4 border-white"
+           >
              <PlusSquare className="w-6 h-6" />
            </button>
         </div>
-        {/* Replaced Messages with Mood */}
         <MobileNavItem active={currentView === 'mood'} onClick={() => setView('mood')} icon={Smile} label="Mood" />
         <MobileNavItem active={currentView === 'profile'} onClick={() => setView('profile')} icon={User} label="Profile" />
       </div>

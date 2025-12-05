@@ -7,22 +7,27 @@ import { Messages } from './pages/Messages';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { MoodTracker } from './pages/MoodTracker';
-import { SearchResults } from './pages/SearchResults'; // Import SearchResults
+import { SearchResults } from './pages/SearchResults';
 import { BookingModal } from './components/healers/BookingModal';
+import { CreatePostModal } from './components/feed/CreatePostModal'; // Import Global Modal
 import { Toast } from './components/common/Toast';
 import { LoadingBar } from './components/common/LoadingBar';
 import { ViewState, Healer } from './types';
 import { useSearch } from './hooks/useSearch';
+import { usePosts } from './hooks/usePosts'; // Import for addPost action
+import { CURRENT_USER } from './data/index';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('feed');
   const [selectedHealer, setSelectedHealer] = useState<Healer | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isCreatePostOpen, setIsCreatePostOpen] = useState(false); // Global Create Post State
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   
-  // Hook for search logic (mainly to add to history when search is triggered)
+  // Logic hooks
   const { addToHistory } = useSearch('');
+  const { addPost } = usePosts(CURRENT_USER); // Get addPost logic
 
   // Page Transition Loading State
   const [isPageLoading, setIsPageLoading] = useState(false);
@@ -57,7 +62,12 @@ const App: React.FC = () => {
         {(() => {
           switch (currentView) {
             case 'feed':
-              return <Home />;
+              return (
+                <Home 
+                  onOpenCreatePost={() => setIsCreatePostOpen(true)} 
+                  onSelectHealer={(h) => { setSelectedHealer(h); handleSetView('healers'); }}
+                />
+              );
             case 'healers':
               return (
                 <HealersPage 
@@ -77,7 +87,7 @@ const App: React.FC = () => {
             case 'search':
               return <SearchResults query={searchQuery} setSelectedHealer={(h) => { setSelectedHealer(h); handleSetView('healers'); }} />;
             default:
-              return <Home />;
+              return <Home onOpenCreatePost={() => setIsCreatePostOpen(true)} onSelectHealer={(h) => { setSelectedHealer(h); handleSetView('healers'); }} />;
           }
         })()}
       </div>
@@ -93,6 +103,7 @@ const App: React.FC = () => {
         setView={handleSetView} 
         setSelectedHealer={setSelectedHealer}
         onSearch={handleSearch}
+        onOpenCreatePost={() => setIsCreatePostOpen(true)}
       >
         {renderContent()}
       </MainLayout>
@@ -101,6 +112,16 @@ const App: React.FC = () => {
         isOpen={isBookingOpen} 
         onClose={() => setIsBookingOpen(false)} 
         healer={selectedHealer} 
+      />
+
+      <CreatePostModal 
+        isOpen={isCreatePostOpen}
+        onClose={() => setIsCreatePostOpen(false)}
+        currentUser={CURRENT_USER}
+        onSubmit={(content, image, visibility, isAnonymous) => {
+          addPost(content, image, visibility, isAnonymous);
+          showToast('Post published successfully!');
+        }}
       />
 
       {toast && (
