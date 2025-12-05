@@ -13,10 +13,11 @@ interface MainLayoutProps {
   currentView: ViewState;
   setView: (view: ViewState) => void;
   setSelectedHealer: (healer: any) => void;
+  onSearch?: (query: string) => void;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, setView, setSelectedHealer }) => {
-  const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile' || currentView === 'settings';
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, setView, setSelectedHealer, onSearch }) => {
+  const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile' || currentView === 'settings' || currentView === 'search';
   
   const [isLoading, setIsLoading] = useState(true);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -76,7 +77,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
   return (
     <div className="h-screen w-full bg-[#F0F2F5] font-sans text-gray-900 flex flex-col overflow-hidden">
       {/* 1. Header */}
-      <Navbar currentView={currentView} setView={setView} />
+      <Navbar currentView={currentView} setView={setView} onSearch={onSearch} />
       
       {/* 2. Scrollable Content Area */}
       <div 

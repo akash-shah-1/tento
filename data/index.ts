@@ -1,3 +1,4 @@
+
 import { Healer, Post, Story, User, Conversation, Message, Group } from '../types';
 
 export const CURRENT_USER: User = {
@@ -7,6 +8,7 @@ export const CURRENT_USER: User = {
   avatar: 'https://picsum.photos/seed/alex/200/200',
 };
 
+// ... (Existing STORIES, POSTS, HEALERS, GROUPS, CONVERSATIONS, MOCK_MESSAGES data remains the same - re-exporting them for brevity)
 export const STORIES: Story[] = [
   {
     userId: 'u1',
@@ -228,4 +230,18 @@ export const TRENDING_TOPICS = [
 
 export const UPCOMING_SESSIONS = [
   { id: 's1', healerName: 'Dr. Emily Stones', time: 'Tomorrow, 2:00 PM', type: 'Video Call', avatar: 'https://picsum.photos/seed/emily/200/200' },
+];
+
+export const TRENDING_SEARCHES = [
+  'Trauma Specialists', 'Anxiety Support Groups', 'Dr. Emily Stones', 'Meditation Techniques', 'Somatic Healing', 'Local Events'
+];
+
+export const MOCK_USERS: User[] = [
+  CURRENT_USER,
+  { id: 'u1', name: 'Sarah J.', handle: '@sarah', avatar: 'https://picsum.photos/seed/sarah/150/150' },
+  { id: 'u2', name: 'Dr. Michael Chen', handle: '@drchen', avatar: 'https://picsum.photos/seed/mike/150/150' },
+  { id: 'u11', name: 'Jessica Waters', handle: '@jessw', avatar: 'https://picsum.photos/seed/jess/150/150' },
+  { id: 'u4', name: 'Luna L.', handle: '@luna', avatar: 'https://picsum.photos/seed/luna/150/150' },
+  { id: 'u5', name: 'Hope C.', handle: '@hope', avatar: 'https://picsum.photos/seed/hope/150/150' },
+  ...HEALERS.map(h => ({ id: h.id, name: h.name, handle: '@' + h.name.replace(/\s/g, '').toLowerCase(), avatar: h.avatar })),
 ];

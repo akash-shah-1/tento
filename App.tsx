@@ -6,18 +6,24 @@ import { HealersPage } from './pages/Healers';
 import { Messages } from './pages/Messages';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
-import { MoodTracker } from './pages/MoodTracker'; // Import MoodTracker
+import { MoodTracker } from './pages/MoodTracker';
+import { SearchResults } from './pages/SearchResults'; // Import SearchResults
 import { BookingModal } from './components/healers/BookingModal';
 import { Toast } from './components/common/Toast';
 import { LoadingBar } from './components/common/LoadingBar';
 import { ViewState, Healer } from './types';
+import { useSearch } from './hooks/useSearch';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewState>('feed');
   const [selectedHealer, setSelectedHealer] = useState<Healer | null>(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [toast, setToast] = useState<{ msg: string; type: 'success' | 'error' } | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   
+  // Hook for search logic (mainly to add to history when search is triggered)
+  const { addToHistory } = useSearch('');
+
   // Page Transition Loading State
   const [isPageLoading, setIsPageLoading] = useState(false);
 
@@ -26,12 +32,18 @@ const App: React.FC = () => {
   }, [currentView, selectedHealer]);
 
   const handleSetView = (view: ViewState) => {
-    if (view === currentView) return;
+    if (view === currentView && view !== 'search') return;
     setIsPageLoading(true);
     setTimeout(() => {
       setCurrentView(view);
       setIsPageLoading(false);
     }, 600); // Simulate routing delay
+  };
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    addToHistory(query);
+    handleSetView('search');
   };
 
   const showToast = (msg: string, type: 'success' | 'error' = 'success') => {
@@ -60,8 +72,10 @@ const App: React.FC = () => {
               return <Profile showToast={showToast} setView={handleSetView} />;
             case 'settings':
               return <Settings showToast={showToast} />;
-            case 'mood': // New Route
+            case 'mood':
               return <MoodTracker />;
+            case 'search':
+              return <SearchResults query={searchQuery} setSelectedHealer={(h) => { setSelectedHealer(h); handleSetView('healers'); }} />;
             default:
               return <Home />;
           }
@@ -78,6 +92,7 @@ const App: React.FC = () => {
         currentView={currentView} 
         setView={handleSetView} 
         setSelectedHealer={setSelectedHealer}
+        onSearch={handleSearch}
       >
         {renderContent()}
       </MainLayout>

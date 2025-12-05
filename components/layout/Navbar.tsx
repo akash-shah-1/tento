@@ -1,19 +1,24 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Home, Search, MessageCircle, User, Bell, Menu, PlusSquare, Smile, Users, LayoutGrid, ChevronDown, LogOut, Settings, X, Clock } from 'lucide-react';
+import { Home, Search, MessageCircle, User, Bell, Menu, PlusSquare, BookOpen, Users, LayoutGrid, ChevronDown, LogOut, Settings, X, Clock, Smile, TrendingUp, ArrowLeft } from 'lucide-react';
 import { ViewState } from '../../types';
-import { CURRENT_USER } from '../../data/index';
+import { CURRENT_USER, TRENDING_SEARCHES } from '../../data/index';
 import { Avatar } from '../common/Avatar';
+import { useSearch } from '../../hooks/useSearch';
 
 interface NavProps {
   currentView: ViewState;
   setView: (view: ViewState) => void;
+  onSearch?: (query: string) => void;
 }
 
-export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
+export const Navbar: React.FC<NavProps> = ({ currentView, setView, onSearch }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [searchText, setSearchText] = useState('');
   const searchRef = useRef<HTMLDivElement>(null);
+  const { history, removeFromHistory } = useSearch(''); // Only need history access here
 
   // Close search dropdown on click outside
   useEffect(() => {
@@ -27,6 +32,46 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && searchText.trim() && onSearch) {
+      onSearch(searchText);
+      setIsSearchFocused(false);
+      setShowMobileSearch(false);
+    }
+  };
+
+  const handleSelectSearch = (term: string) => {
+    setSearchText(term);
+    if (onSearch) onSearch(term);
+    setIsSearchFocused(false);
+    setShowMobileSearch(false);
+  };
+
+  // Mobile Search View Override
+  if (showMobileSearch) {
+    return (
+      <nav className="sticky top-0 z-50 w-full bg-white shadow-sm border-b border-gray-100 h-14 flex items-center px-2 animate-in fade-in duration-200">
+        <button 
+          onClick={() => setShowMobileSearch(false)} 
+          className="p-2 rounded-full hover:bg-gray-100 text-gray-500 mr-2"
+        >
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <div className="flex-1 relative">
+          <input
+            autoFocus
+            type="text"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="w-full bg-gray-100 rounded-full py-2.5 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-primary-500 placeholder-gray-500"
+            placeholder="Search HealSpace..."
+          />
+        </div>
+      </nav>
+    );
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-white shadow-sm border-b border-gray-100 h-14">
@@ -52,38 +97,71 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
              </div>
              <input
                type="text"
+               value={searchText}
+               onChange={(e) => setSearchText(e.target.value)}
                onFocus={() => setIsSearchFocused(true)}
+               onKeyDown={handleKeyDown}
                className={`block w-full pl-10 pr-3 py-2.5 bg-gray-100 border-none rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:bg-white transition-all ${isSearchFocused ? 'shadow-md' : ''}`}
                placeholder="Search HealSpace"
              />
              
              {/* Search Dropdown */}
              {isSearchFocused && (
-               <div className="absolute top-full left-0 w-[300px] bg-white rounded-xl shadow-xl border border-gray-100 mt-2 p-2 z-50 animate-in fade-in slide-in-from-top-2">
-                 <div className="flex justify-between items-center px-3 py-2">
-                   <span className="text-sm font-bold text-gray-900">Recent Searches</span>
-                   <button className="text-xs text-blue-600 hover:underline">Edit</button>
+               <div className="absolute top-full left-0 w-[320px] bg-white rounded-xl shadow-xl border border-gray-100 mt-2 p-2 z-50 animate-in fade-in slide-in-from-top-2">
+                 
+                 {/* Recent Searches */}
+                 {history.length > 0 && (
+                   <div className="mb-2">
+                     <div className="flex justify-between items-center px-3 py-2">
+                       <span className="text-sm font-bold text-gray-900">Recent Searches</span>
+                       <button className="text-xs text-blue-600 hover:underline">Edit</button>
+                     </div>
+                     <ul>
+                       {history.map((term, i) => (
+                         <li key={i} className="flex items-center justify-between px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer group" onClick={() => handleSelectSearch(term)}>
+                           <div className="flex items-center">
+                             <div className="bg-gray-100 p-1.5 rounded-full mr-3 group-hover:bg-white transition-colors">
+                               <Clock className="w-4 h-4 text-gray-500" />
+                             </div>
+                             <span className="text-sm text-gray-700">{term}</span>
+                           </div>
+                           <button 
+                             onClick={(e) => { e.stopPropagation(); removeFromHistory(term); }}
+                             className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200"
+                           >
+                             <X className="w-3 h-3" />
+                           </button>
+                         </li>
+                       ))}
+                     </ul>
+                   </div>
+                 )}
+
+                 {/* Trending Searches */}
+                 <div>
+                    <div className="px-3 py-2">
+                       <span className="text-sm font-bold text-gray-900">Trending</span>
+                    </div>
+                    <ul>
+                      {TRENDING_SEARCHES.slice(0, 4).map((term, i) => (
+                        <li key={i} className="flex items-center px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer group" onClick={() => handleSelectSearch(term)}>
+                           <div className="bg-gray-100 p-1.5 rounded-full mr-3 group-hover:bg-white transition-colors">
+                             <TrendingUp className="w-4 h-4 text-primary-500" />
+                           </div>
+                           <span className="text-sm text-gray-700">{term}</span>
+                        </li>
+                      ))}
+                    </ul>
                  </div>
-                 <ul>
-                   {['Anxiety Support', 'Dr. Emily', 'Meditation Groups'].map((term, i) => (
-                     <li key={i} className="flex items-center justify-between px-3 py-2 hover:bg-gray-100 rounded-lg cursor-pointer group">
-                       <div className="flex items-center">
-                         <div className="bg-gray-100 p-1.5 rounded-full mr-3 group-hover:bg-white transition-colors">
-                           <Clock className="w-4 h-4 text-gray-500" />
-                         </div>
-                         <span className="text-sm text-gray-700">{term}</span>
-                       </div>
-                       <button className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-200">
-                         <X className="w-3 h-3" />
-                       </button>
-                     </li>
-                   ))}
-                 </ul>
+
                </div>
              )}
           </div>
           
-          <button className="xl:hidden p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors ml-2 flex-shrink-0">
+          <button 
+            className="xl:hidden p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors ml-2 flex-shrink-0"
+            onClick={() => setShowMobileSearch(true)}
+          >
             <Search className="w-5 h-5 text-gray-600" />
           </button>
         </div>
@@ -91,7 +169,6 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
         {/* CENTER: Navigation Icons */}
         <div className="hidden md:flex items-center justify-center space-x-1 lg:space-x-2 flex-1 max-w-[680px] px-2 h-full">
            <NavIcon active={currentView === 'feed'} onClick={() => setView('feed')} icon={Home} label="Home" />
-           {/* Replaced Stories with Mood Tracker */}
            <NavIcon active={currentView === 'mood'} onClick={() => setView('mood')} icon={Smile} label="Mood Tracker" />
            <NavIcon active={currentView === 'healers'} onClick={() => setView('healers')} icon={Users} label="Healers" />
            <NavIcon active={currentView === 'messages'} onClick={() => setView('messages')} icon={MessageCircle} label="Messages" badge={2} />
@@ -105,7 +182,6 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
            </div>
 
            <NavActionBtn icon={LayoutGrid} label="Menu" className="hidden md:flex" />
-           {/* Mobile Messenger Icon in Header */}
            <NavActionBtn icon={MessageCircle} label="Messenger" badge={2} className="flex xl:hidden" onClick={() => setView('messages')} />
            <NavActionBtn icon={Bell} label="Notifications" badge={5} />
            
