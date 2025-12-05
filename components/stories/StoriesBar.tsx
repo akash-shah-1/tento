@@ -117,10 +117,10 @@ const MobileStoryCard: React.FC<{ story: Story; isOwner?: boolean }> = ({ story,
   const latestItem = story.items[story.items.length - 1];
   
   return (
-    <div className="relative w-28 h-44 rounded-xl overflow-hidden cursor-pointer flex-shrink-0 group shadow-sm bg-gray-900">
+    <div className="relative w-28 h-44 rounded-xl overflow-hidden cursor-pointer flex-shrink-0 group shadow-md bg-gray-900">
       {/* Background Image */}
       {latestItem.type === 'image' || latestItem.type === 'video' ? (
-        <img src={latestItem.url} alt="Story" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-90" />
+        <img src={latestItem.url} alt="Story" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-95" />
       ) : (
         <div className="w-full h-full flex items-center justify-center p-2 text-center text-xs text-white font-bold" style={{ background: latestItem.background || '#333' }}>
           {latestItem.text?.slice(0, 30)}...
@@ -128,16 +128,16 @@ const MobileStoryCard: React.FC<{ story: Story; isOwner?: boolean }> = ({ story,
       )}
       
       {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/10"></div>
       
       {/* User Info - Top Left */}
-      <div className="absolute top-2 left-2">
-        <div className={`rounded-full p-0.5 ${story.allViewed ? 'border-gray-400' : 'border-primary-500'} border-2 bg-white`}>
-           <img src={story.user.avatar} alt={story.user.name} className="w-7 h-7 rounded-full object-cover" />
+      <div className="absolute top-2 left-2 z-10">
+        <div className={`rounded-full p-[2px] ${story.allViewed ? 'bg-gray-400/50' : 'bg-primary-500'} backdrop-blur-sm`}>
+           <img src={story.user.avatar} alt={story.user.name} className="w-7 h-7 rounded-full object-cover border border-white/80" />
         </div>
       </div>
       
-      <p className="absolute bottom-3 left-2 right-2 text-white text-[11px] font-bold truncate leading-tight drop-shadow-md">
+      <p className="absolute bottom-3 left-2 right-2 text-white text-[11px] font-bold truncate leading-tight drop-shadow-md tracking-wide">
         {isOwner ? 'Your Story' : story.user.name}
       </p>
     </div>
