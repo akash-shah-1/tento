@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MoreVertical, Search, Video } from 'lucide-react';
+import { MoreVertical, Search, Video, Smile } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
 import { HEALERS, TRENDING_TOPICS, UPCOMING_SESSIONS, CONVERSATIONS } from '../../data/index';
@@ -21,6 +21,26 @@ export const RightSidebar: React.FC<{ setSelectedHealer: (h: any) => void, setVi
     <div className="hidden lg:block pr-2">
       <div className="sticky top-6 h-[calc(100vh-80px)] overflow-y-auto no-scrollbar pl-2 pb-6 space-y-5">
          
+         {/* Daily Check-in Widget */}
+         <div className="bg-gradient-to-r from-primary-50 to-blue-50 rounded-xl shadow-sm border border-blue-100 p-4 relative overflow-hidden">
+            <div className="relative z-10">
+              <div className="flex justify-between items-center mb-2">
+                <h3 className="font-bold text-gray-900 text-sm">Daily Check-in</h3>
+                <Smile className="w-4 h-4 text-primary-500" />
+              </div>
+              <p className="text-xs text-gray-600 mb-3">How are you feeling right now?</p>
+              <Button 
+                size="sm" 
+                fullWidth 
+                className="bg-white text-primary-600 border border-primary-200 hover:bg-primary-50"
+                onClick={() => setView('mood')}
+              >
+                Track Mood
+              </Button>
+            </div>
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-primary-100 rounded-full opacity-50 blur-xl"></div>
+         </div>
+
          {/* Upcoming Sessions Widget */}
          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
            <div className="flex justify-between items-center mb-3">

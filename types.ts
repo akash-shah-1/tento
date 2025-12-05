@@ -140,4 +140,4 @@ export interface Conversation {
   timestamp: string;
 }
 
-export type ViewState = 'feed' | 'healers' | 'messages' | 'profile' | 'settings';
+export type ViewState = 'feed' | 'healers' | 'messages' | 'profile' | 'settings' | 'mood';

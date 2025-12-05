@@ -6,6 +6,7 @@ import { HealersPage } from './pages/Healers';
 import { Messages } from './pages/Messages';
 import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
+import { MoodTracker } from './pages/MoodTracker'; // Import MoodTracker
 import { BookingModal } from './components/healers/BookingModal';
 import { Toast } from './components/common/Toast';
 import { LoadingBar } from './components/common/LoadingBar';
@@ -59,6 +60,8 @@ const App: React.FC = () => {
               return <Profile showToast={showToast} setView={handleSetView} />;
             case 'settings':
               return <Settings showToast={showToast} />;
+            case 'mood': // New Route
+              return <MoodTracker />;
             default:
               return <Home />;
           }
