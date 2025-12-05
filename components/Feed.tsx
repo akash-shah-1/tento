@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Image as ImageIcon, Smile, Lock, Globe, Users, CheckCircle } from 'lucide-react';
+import { Image as ImageIcon, Smile, Lock, Globe, Users, BadgeCheck } from 'lucide-react';
 import { Card } from './common/Card';
 import { Avatar } from './common/Avatar';
 import { Button } from './common/Button';
@@ -10,13 +10,13 @@ import { CreatePostModal } from './CreatePostModal';
 // --- Suggested Healers Rail (Minimal Attractive Design) ---
 export const SuggestedHealersRail: React.FC<{ onSelect: (h: any) => void }> = ({ onSelect }) => {
   return (
-    <div className="mb-6 block md:hidden py-5 bg-gradient-to-r from-blue-50/80 via-white to-blue-50/80 border-y border-blue-50/50">
+    <div className="mb-6 block md:hidden py-6 bg-gradient-to-b from-blue-50/80 to-white shadow-inner">
       <div className="flex items-center justify-between px-4 mb-4">
         <h3 className="font-bold text-gray-900 text-sm tracking-tight">Recommended Professionals</h3>
-        <span className="text-xs text-primary-600 font-semibold cursor-pointer hover:bg-white/50 px-2 py-1 rounded-full transition-colors">View all</span>
+        <span className="text-xs text-primary-600 font-semibold cursor-pointer hover:bg-blue-50 px-2 py-1 rounded-full transition-colors">See all</span>
       </div>
-      <div className="flex space-x-5 overflow-x-auto pb-2 no-scrollbar px-4 snap-x">
-        {HEALERS.slice(0, 6).map((healer) => (
+      <div className="flex space-x-6 overflow-x-auto pb-2 no-scrollbar px-4 snap-x">
+        {HEALERS.map((healer) => (
           <div 
             key={healer.id} 
             className="flex flex-col items-center flex-shrink-0 cursor-pointer group snap-center"
@@ -24,22 +24,22 @@ export const SuggestedHealersRail: React.FC<{ onSelect: (h: any) => void }> = ({
           >
             <div className="relative mb-2 transition-transform transform group-active:scale-95 duration-200">
               {/* Gradient Ring */}
-              <div className="w-[68px] h-[68px] rounded-full p-[2px] bg-gradient-to-tr from-primary-400 via-secondary-400 to-primary-400 shadow-sm">
+              <div className="w-[72px] h-[72px] rounded-full p-[2px] bg-gradient-to-tr from-primary-400 via-secondary-400 to-primary-400 shadow-md">
                 <div className="bg-white p-[2px] rounded-full w-full h-full">
                   <img src={healer.avatar} className="w-full h-full rounded-full object-cover" alt={healer.name} />
                 </div>
               </div>
               
-              {/* Verified Badge */}
+              {/* Verified Badge (Premium Look) */}
               {healer.isVerified && (
-                <div className="absolute bottom-0 right-0 bg-white rounded-full p-[2px] shadow-sm ring-1 ring-white">
-                  <CheckCircle className="w-5 h-5 text-blue-500 fill-current" />
+                <div className="absolute bottom-0 right-0 bg-white rounded-full p-[1px] shadow-sm ring-2 ring-white">
+                  <BadgeCheck className="w-5 h-5 text-blue-500 fill-blue-50" />
                 </div>
               )}
             </div>
             
-            <span className="text-xs font-semibold text-gray-800 text-center truncate w-20 group-hover:text-primary-600 transition-colors">
-              {healer.name.split(' ')[0]}
+            <span className="text-xs font-medium text-gray-800 text-center truncate w-20 leading-tight">
+              {healer.name.split(' ')[0]} {healer.name.split(' ')[1]?.[0]}.
             </span>
           </div>
         ))}

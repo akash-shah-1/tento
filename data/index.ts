@@ -8,7 +8,6 @@ export const CURRENT_USER: User = {
   avatar: 'https://picsum.photos/seed/alex/200/200',
 };
 
-// ... (Existing STORIES, POSTS, HEALERS, GROUPS, CONVERSATIONS, MOCK_MESSAGES data remains the same - re-exporting them for brevity)
 export const STORIES: Story[] = [
   {
     userId: 'u1',
@@ -177,6 +176,82 @@ export const HEALERS: Healer[] = [
     languages: ['English', 'Korean'],
     experience: '15+ Years',
     nextAvailable: 'Fri, 11:30 AM',
+    reviews: []
+  },
+  {
+    id: 'h5',
+    name: 'Dr. Sarah Mitchell',
+    title: 'Holistic Psychiatrist',
+    specialization: ['Anxiety', 'Depression', 'Holistic'],
+    rating: 4.9,
+    reviewCount: 215,
+    rate: 200,
+    avatar: 'https://picsum.photos/seed/sarahm/200/200',
+    coverImage: 'https://picsum.photos/seed/office5/800/300',
+    about: 'Integrating traditional psychiatry with holistic approaches for whole-body healing.',
+    credentials: ['MD Psychiatry', 'Holistic Medicine Cert'],
+    location: 'Denver, CO',
+    isVerified: true,
+    languages: ['English'],
+    experience: '15 Years',
+    nextAvailable: 'Mon, 10:00 AM',
+    reviews: []
+  },
+  {
+    id: 'h6',
+    name: 'James Wilson',
+    title: 'Trauma Coach',
+    specialization: ['PTSD', 'Men\'s Health'],
+    rating: 4.7,
+    reviewCount: 88,
+    rate: 110,
+    avatar: 'https://picsum.photos/seed/jamesw/200/200',
+    coverImage: 'https://picsum.photos/seed/office6/800/300',
+    about: 'Supporting men in navigating trauma and emotional resilience.',
+    credentials: ['Certified Trauma Coach'],
+    location: 'Remote',
+    isVerified: true,
+    languages: ['English'],
+    experience: '6 Years',
+    nextAvailable: 'Tue, 3:00 PM',
+    reviews: []
+  },
+  {
+    id: 'h7',
+    name: 'Elena Rodriguez',
+    title: 'Family Therapist',
+    specialization: ['Family Systems', 'Child Therapy'],
+    rating: 5.0,
+    reviewCount: 150,
+    rate: 140,
+    avatar: 'https://picsum.photos/seed/elena/200/200',
+    coverImage: 'https://picsum.photos/seed/office7/800/300',
+    about: 'Helping families heal together through connection and understanding.',
+    credentials: ['LMFT', 'Play Therapy Cert'],
+    location: 'Miami, FL',
+    isVerified: true,
+    languages: ['English', 'Spanish'],
+    experience: '10 Years',
+    nextAvailable: 'Wed, 11:00 AM',
+    reviews: []
+  },
+  {
+    id: 'h8',
+    name: 'Michael Chang',
+    title: 'Meditation Teacher',
+    specialization: ['Mindfulness', 'Stress Reduction'],
+    rating: 4.8,
+    reviewCount: 300,
+    rate: 90,
+    avatar: 'https://picsum.photos/seed/michaelc/200/200',
+    coverImage: 'https://picsum.photos/seed/office8/800/300',
+    about: 'Guiding you to find inner peace through mindfulness practices.',
+    credentials: ['Certified Mindfulness Instructor'],
+    location: 'San Francisco, CA',
+    isVerified: true,
+    languages: ['English', 'Mandarin'],
+    experience: '8 Years',
+    nextAvailable: 'Thu, 9:00 AM',
     reviews: []
   }
 ];
