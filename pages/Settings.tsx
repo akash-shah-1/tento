@@ -1,20 +1,20 @@
 
 import React, { useState } from 'react';
-import { User, Lock, Bell, Moon, Shield, HelpCircle, AlertTriangle, ChevronRight, Check } from 'lucide-react';
+import { User, Lock, Bell, Moon, Shield, HelpCircle, AlertTriangle, ChevronRight, Check, Info, FileText } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Button } from '../components/common/Button';
 import { CURRENT_USER } from '../data/index';
 
-type SettingsTab = 'account' | 'privacy' | 'notifications' | 'appearance' | 'support';
+type SettingsTab = 'account' | 'privacy' | 'notifications' | 'appearance' | 'support' | 'about';
 
 export const Settings: React.FC<{ showToast: (msg: string) => void }> = ({ showToast }) => {
   const [activeTab, setActiveTab] = useState<SettingsTab>('account');
   const [emailNotifications, setEmailNotifications] = useState(true);
   const [pushNotifications, setPushNotifications] = useState(true);
   const [theme, setTheme] = useState<'Light' | 'Dark' | 'Auto'>('Light');
+  const [fontSize, setFontSize] = useState(16);
 
   const handleSave = () => {
-    // Simulate save
     showToast('Settings saved successfully');
   };
 
@@ -23,7 +23,8 @@ export const Settings: React.FC<{ showToast: (msg: string) => void }> = ({ showT
     { id: 'privacy', label: 'Privacy', icon: Lock },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'appearance', label: 'Appearance', icon: Moon },
-    { id: 'support', label: 'Support', icon: HelpCircle },
+    { id: 'support', label: 'Support & Help', icon: HelpCircle },
+    { id: 'about', label: 'About', icon: Info },
   ];
 
   return (
@@ -195,6 +196,25 @@ export const Settings: React.FC<{ showToast: (msg: string) => void }> = ({ showT
                   ))}
                </div>
                
+               <div className="mb-6">
+                 <div className="flex justify-between mb-2">
+                   <p className="font-medium text-gray-900">Font Size</p>
+                   <span className="text-sm text-gray-500">{fontSize}px</span>
+                 </div>
+                 <input 
+                   type="range" 
+                   min="12" 
+                   max="24" 
+                   value={fontSize} 
+                   onChange={(e) => setFontSize(parseInt(e.target.value))} 
+                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-primary-500"
+                 />
+                 <div className="flex justify-between text-xs text-gray-400 mt-1">
+                   <span>Aa (Small)</span>
+                   <span>Aa (Large)</span>
+                 </div>
+               </div>
+
                <div className="flex items-center justify-between mb-4">
                   <div>
                     <p className="font-medium text-gray-900">Reduce Motion</p>
@@ -203,6 +223,61 @@ export const Settings: React.FC<{ showToast: (msg: string) => void }> = ({ showT
                   <input type="checkbox" className="w-5 h-5 text-primary-600 rounded" />
                </div>
              </Card>
+          )}
+
+          {activeTab === 'support' && (
+            <div className="space-y-4 animate-in fade-in">
+              <Card className="p-6 hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                 <div className="flex items-center space-x-4">
+                   <div className="bg-blue-100 p-2 rounded-lg text-blue-600"><HelpCircle /></div>
+                   <div>
+                     <h3 className="font-bold text-gray-900">Help Center</h3>
+                     <p className="text-sm text-gray-500">Guides, FAQs, and resources</p>
+                   </div>
+                 </div>
+                 <ChevronRight className="text-gray-400" />
+              </Card>
+              <Card className="p-6 hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                 <div className="flex items-center space-x-4">
+                   <div className="bg-red-100 p-2 rounded-lg text-red-600"><AlertTriangle /></div>
+                   <div>
+                     <h3 className="font-bold text-gray-900">Crisis Resources</h3>
+                     <p className="text-sm text-gray-500">Immediate support contacts</p>
+                   </div>
+                 </div>
+                 <ChevronRight className="text-gray-400" />
+              </Card>
+              <Card className="p-6 hover:bg-gray-50 cursor-pointer transition-colors flex items-center justify-between">
+                 <div className="flex items-center space-x-4">
+                   <div className="bg-gray-100 p-2 rounded-lg text-gray-600"><Shield /></div>
+                   <div>
+                     <h3 className="font-bold text-gray-900">Report a Problem</h3>
+                     <p className="text-sm text-gray-500">Let us know if something isn't working</p>
+                   </div>
+                 </div>
+                 <ChevronRight className="text-gray-400" />
+              </Card>
+            </div>
+          )}
+
+          {activeTab === 'about' && (
+            <div className="space-y-4 animate-in fade-in">
+              <Card className="p-6 space-y-4">
+                <h3 className="font-bold text-gray-900">HealSpace</h3>
+                <p className="text-sm text-gray-600">Version 1.2.0 (Build 2024.08.14)</p>
+                <div className="border-t border-gray-100 pt-4 space-y-3">
+                  <div className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 cursor-pointer">
+                    <FileText className="w-4 h-4" /> <span>Terms of Service</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 cursor-pointer">
+                    <Shield className="w-4 h-4" /> <span>Privacy Policy</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 cursor-pointer">
+                    <Check className="w-4 h-4" /> <span>Community Guidelines</span>
+                  </div>
+                </div>
+              </Card>
+            </div>
           )}
 
           {/* Action Footer */}

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Star, MapPin, Clock, CheckCircle, ChevronLeft, MessageCircle, Share2, MoreVertical, Bookmark, Calendar, Globe, Award, ThumbsUp, Flag } from 'lucide-react';
 import { Healer } from '../../types';
@@ -117,10 +118,10 @@ export const HealerProfile: React.FC<{ healer: Healer; onBack: () => void; onBoo
 
         {/* Tab Content */}
         <div className="p-6 md:p-8 bg-gray-50 min-h-[300px]">
-           {/* Change from lg:grid-cols-3 to md:grid-cols-3 to allow 2 columns on tablet */}
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+           {/* Change from md:grid-cols-3 to lg:grid-cols-3 to stack on tablet */}
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
              {/* Left Column (Main Content) */}
-             <div className="md:col-span-2 space-y-6">
+             <div className="lg:col-span-2 space-y-6">
                 
                 {activeTab === 'about' && (
                   <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 animate-in fade-in">
@@ -313,3 +314,4 @@ export const HealerProfile: React.FC<{ healer: Healer; onBack: () => void; onBoo
     </div>
   );
 };
+    
