@@ -21,7 +21,10 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
   const [showOptions, setShowOptions] = useState(false);
   const [showShareDrawer, setShowShareDrawer] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  
+  // Refs for timers and touch handling
   const reactionTimerRef = useRef<any>(null);
+  const longPressTimerRef = useRef<any>(null);
 
   const isAnonymous = post.user.isAnonymous;
   const isLongText = post.content.length > 250;
@@ -32,6 +35,7 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
     'Private': Lock
   }[post.visibility] || Globe;
 
+  // Desktop Hover Logic
   const handleMouseEnterLike = () => {
     if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
     reactionTimerRef.current = setTimeout(() => setShowReactionPicker(true), 500);
@@ -40,6 +44,19 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
   const handleMouseLeaveLike = () => {
     if (reactionTimerRef.current) clearTimeout(reactionTimerRef.current);
     reactionTimerRef.current = setTimeout(() => setShowReactionPicker(false), 300);
+  };
+
+  // Mobile Long Press Logic
+  const handleTouchStart = () => {
+    longPressTimerRef.current = setTimeout(() => {
+      setShowReactionPicker(true);
+    }, 500); // 500ms long press
+  };
+
+  const handleTouchEnd = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+    }
   };
 
   // Get active reaction details
@@ -149,11 +166,13 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
 
           {/* Action Buttons */}
           <div className="flex items-center justify-between pt-1 px-2 md:px-4">
-            {/* Like Button with Reaction Picker */}
+            {/* Like Button Container with Hover/Touch Logic */}
             <div 
               className="relative flex-1" 
               onMouseEnter={handleMouseEnterLike} 
               onMouseLeave={handleMouseLeaveLike}
+              onTouchStart={handleTouchStart}
+              onTouchEnd={handleTouchEnd}
             >
               <ReactionPicker 
                 isVisible={showReactionPicker} 
@@ -164,7 +183,14 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
               />
               <LikeButton 
                 activeReaction={activeReaction}
-                onClick={() => onReact?.(post.id, 'Like')}
+                onClick={() => {
+                  // If already reacted with something specific, toggle it off by passing SAME reaction
+                  if (activeReaction) {
+                    onReact?.(post.id, activeReaction.label);
+                  } else {
+                    onReact?.(post.id, 'Like');
+                  }
+                }}
               />
             </div>
             
@@ -209,16 +235,16 @@ const LikeButton: React.FC<{ activeReaction: any; onClick: () => void }> = ({ ac
     setIsBouncing(true);
     setTimeout(() => setIsBouncing(false), 400);
 
-    // Trigger Particles if becoming active
+    // Trigger Particles if becoming active (i.e., currently null)
     if (!activeReaction) {
-      const newParticles = Array.from({ length: 6 }).map((_, i) => ({
+      const newParticles = Array.from({ length: 8 }).map((_, i) => ({
         id: Date.now() + i,
-        x: (Math.random() - 0.5) * 40,
-        y: (Math.random() - 0.5) * 40 - 20,
-        color: ['#EF4444', '#3B82F6', '#F59E0B', '#10B981'][Math.floor(Math.random() * 4)]
+        x: (Math.random() - 0.5) * 60, // Random spread X
+        y: (Math.random() - 0.5) * 60 - 30, // Random spread Y (mostly up)
+        color: ['#EF4444', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'][Math.floor(Math.random() * 5)]
       }));
       setParticles(newParticles);
-      setTimeout(() => setParticles([]), 600);
+      setTimeout(() => setParticles([]), 700); // Clear after animation
     }
 
     onClick();
@@ -243,7 +269,7 @@ const LikeButton: React.FC<{ activeReaction: any; onClick: () => void }> = ({ ac
         {particles.map(p => (
           <span 
             key={p.id}
-            className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full animate-particle-burst"
+            className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full animate-particle-burst pointer-events-none"
             style={{ 
               backgroundColor: p.color,
               '--tw-translate-x': `${p.x}px`,

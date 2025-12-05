@@ -49,13 +49,14 @@ export const usePosts = (currentUser: User) => {
   const reactToPost = (postId: string, reactionType: string = 'Like') => {
     const updatedPosts = posts.map(post => {
       if (post.id === postId) {
+        // Check if user is clicking the EXACT same reaction they already have
         const isSameReaction = post.userReaction === reactionType;
         
-        // CASE 1: Post is already liked
+        // CASE 1: Post is already reacted to
         if (post.isLiked) {
             // Sub-case A: Clicking the SAME reaction -> Toggle OFF (Unlike)
-            // Or if explicitly toggling 'Like' button when already liked
-            if (isSameReaction || (reactionType === 'Like' && post.userReaction === 'Like')) {
+            // Or if clicking the main "Like" button (which defaults to 'Like' type) when currently 'Like'
+            if (isSameReaction) {
                 return {
                     ...post,
                     isLiked: false,
@@ -64,7 +65,8 @@ export const usePosts = (currentUser: User) => {
                 };
             }
             
-            // Sub-case B: Clicking a DIFFERENT reaction -> Switch Reaction (Count stays same)
+            // Sub-case B: Clicking a DIFFERENT reaction (e.g. was 'Like', now 'Love') 
+            // -> Switch Reaction (Count stays same, just type changes)
             return {
                 ...post,
                 isLiked: true,
