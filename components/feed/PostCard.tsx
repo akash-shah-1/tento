@@ -162,11 +162,8 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
                   setShowReactionPicker(false);
                 }} 
               />
-              <ActionButton 
-                icon={activeReaction ? (() => <span className="text-lg">{activeReaction.emoji}</span>) : Heart} 
-                label={activeReaction ? activeReaction.label : "Like"} 
-                active={!!activeReaction} 
-                activeColor={activeReaction ? activeReaction.color : "text-gray-600"}
+              <LikeButton 
+                activeReaction={activeReaction}
                 onClick={() => onReact?.(post.id, 'Like')}
               />
             </div>
@@ -202,6 +199,63 @@ const ActionButton: React.FC<{ icon: any; label: string; active?: boolean; activ
     <span className="text-sm font-semibold">{label}</span>
   </button>
 );
+
+const LikeButton: React.FC<{ activeReaction: any; onClick: () => void }> = ({ activeReaction, onClick }) => {
+  const [isBouncing, setIsBouncing] = useState(false);
+  const [particles, setParticles] = useState<{ id: number; x: number; y: number; color: string }[]>([]);
+
+  const handleClick = (e: React.MouseEvent) => {
+    // Trigger Bounce
+    setIsBouncing(true);
+    setTimeout(() => setIsBouncing(false), 400);
+
+    // Trigger Particles if becoming active
+    if (!activeReaction) {
+      const newParticles = Array.from({ length: 6 }).map((_, i) => ({
+        id: Date.now() + i,
+        x: (Math.random() - 0.5) * 40,
+        y: (Math.random() - 0.5) * 40 - 20,
+        color: ['#EF4444', '#3B82F6', '#F59E0B', '#10B981'][Math.floor(Math.random() * 4)]
+      }));
+      setParticles(newParticles);
+      setTimeout(() => setParticles([]), 600);
+    }
+
+    onClick();
+  };
+
+  return (
+    <button 
+      onClick={handleClick}
+      className={`relative flex-1 w-full flex items-center justify-center space-x-2 py-2 rounded-lg hover:bg-gray-50 transition-colors group ${activeReaction ? activeReaction.color : 'text-gray-500'}`}
+    >
+      <div className="relative">
+        {/* Main Icon */}
+        <div className={`transform transition-transform duration-200 ${isBouncing ? 'animate-bounce-scale' : 'group-hover:scale-110'}`}>
+          {activeReaction ? (
+            <span className="text-lg md:text-xl">{activeReaction.emoji}</span>
+          ) : (
+            <Heart className="w-5 h-5 md:w-6 md:h-6" />
+          )}
+        </div>
+
+        {/* Particles */}
+        {particles.map(p => (
+          <span 
+            key={p.id}
+            className="absolute top-1/2 left-1/2 w-1.5 h-1.5 rounded-full animate-particle-burst"
+            style={{ 
+              backgroundColor: p.color,
+              '--tw-translate-x': `${p.x}px`,
+              '--tw-translate-y': `${p.y}px`
+            } as React.CSSProperties}
+          ></span>
+        ))}
+      </div>
+      <span className="text-sm font-semibold">{activeReaction ? activeReaction.label : 'Like'}</span>
+    </button>
+  );
+};
 
 const OptionItem: React.FC<{ icon: any; label: string; color?: string; onClick?: () => void }> = ({ icon: Icon, label, color = "text-gray-700", onClick }) => (
   <button 

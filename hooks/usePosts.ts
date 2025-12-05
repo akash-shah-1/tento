@@ -6,16 +6,22 @@ import { getFromStorage, saveToStorage } from '../utils/storage';
 
 export const usePosts = (currentUser: User) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Initialize with mock data if storage is empty
-    const storedPosts = getFromStorage<Post[]>('healspace_posts', []);
-    if (storedPosts.length === 0) {
-      setPosts(POSTS);
-      saveToStorage('healspace_posts', POSTS);
-    } else {
-      setPosts(storedPosts);
-    }
+    const timer = setTimeout(() => {
+      // Initialize with mock data if storage is empty
+      const storedPosts = getFromStorage<Post[]>('healspace_posts', []);
+      if (storedPosts.length === 0) {
+        setPosts(POSTS);
+        saveToStorage('healspace_posts', POSTS);
+      } else {
+        setPosts(storedPosts);
+      }
+      setIsLoading(false);
+    }, 1500); // Simulate network delay
+
+    return () => clearTimeout(timer);
   }, []);
 
   const addPost = (content: string, image: string | undefined, visibility: 'Public' | 'Private' | 'Friends', isAnonymous: boolean) => {
@@ -33,8 +39,6 @@ export const usePosts = (currentUser: User) => {
       shares: 0,
       isLiked: false,
       visibility,
-      // Initialize reactions array (custom property not in original type, but we handle it locally)
-      // For strict typing, we'd update types.ts, but standard Post interface works for basic view
     };
 
     const updatedPosts = [newPost, ...posts];
@@ -42,16 +46,38 @@ export const usePosts = (currentUser: User) => {
     saveToStorage('healspace_posts', updatedPosts);
   };
 
-  const reactToPost = (postId: string, reactionType: string = 'like') => {
+  const reactToPost = (postId: string, reactionType: string = 'Like') => {
     const updatedPosts = posts.map(post => {
       if (post.id === postId) {
-        // Toggle like if same reaction or just adding reaction
-        // Simple boolean toggle logic for now based on original types
-        const isLiked = !post.isLiked;
+        const isSameReaction = post.userReaction === reactionType;
+        
+        // CASE 1: Post is already liked
+        if (post.isLiked) {
+            // Sub-case A: Clicking the SAME reaction -> Toggle OFF (Unlike)
+            // Or if explicitly toggling 'Like' button when already liked
+            if (isSameReaction || (reactionType === 'Like' && post.userReaction === 'Like')) {
+                return {
+                    ...post,
+                    isLiked: false,
+                    likes: Math.max(0, post.likes - 1),
+                    userReaction: undefined
+                };
+            }
+            
+            // Sub-case B: Clicking a DIFFERENT reaction -> Switch Reaction (Count stays same)
+            return {
+                ...post,
+                isLiked: true,
+                userReaction: reactionType
+            };
+        }
+
+        // CASE 2: Post is NOT liked -> Toggle ON
         return {
-          ...post,
-          isLiked,
-          likes: isLiked ? post.likes + 1 : Math.max(0, post.likes - 1)
+            ...post,
+            isLiked: true,
+            likes: post.likes + 1,
+            userReaction: reactionType
         };
       }
       return post;
@@ -66,5 +92,5 @@ export const usePosts = (currentUser: User) => {
     saveToStorage('healspace_posts', updatedPosts);
   };
 
-  return { posts, addPost, reactToPost, deletePost };
+  return { posts, isLoading, addPost, reactToPost, deletePost };
 };

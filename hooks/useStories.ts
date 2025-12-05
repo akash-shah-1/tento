@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Story, StoryItem, User } from '../types';
 import { STORIES, CURRENT_USER } from '../utils/constants';
@@ -6,19 +5,25 @@ import { getFromStorage, saveToStorage } from '../utils/storage';
 
 export const useStories = () => {
   const [stories, setStories] = useState<Story[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [activeStoryIndex, setActiveStoryIndex] = useState<number | null>(null);
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
 
   useEffect(() => {
-    // Changed key to v2 to force load new mock data for demonstration
-    const stored = getFromStorage<Story[]>('healspace_stories_v2', STORIES);
-    const now = Date.now();
-    const validStories = stored.map(s => ({
-      ...s,
-      items: s.items.filter(i => (now - i.timestamp) < 24 * 60 * 60 * 1000)
-    })).filter(s => s.items.length > 0);
-    
-    setStories(validStories);
+    const timer = setTimeout(() => {
+      // Changed key to v2 to force load new mock data for demonstration
+      const stored = getFromStorage<Story[]>('healspace_stories_v2', STORIES);
+      const now = Date.now();
+      const validStories = stored.map(s => ({
+        ...s,
+        items: s.items.filter(i => (now - i.timestamp) < 24 * 60 * 60 * 1000)
+      })).filter(s => s.items.length > 0);
+      
+      setStories(validStories);
+      setIsLoading(false);
+    }, 1000); // Simulate slightly faster load for stories
+
+    return () => clearTimeout(timer);
   }, []);
 
   const viewStory = (userIndex: number) => {
@@ -106,11 +111,11 @@ export const useStories = () => {
 
   const reactToStory = (reaction: string) => {
     console.log(`Reacted ${reaction} to story`);
-    // Logic to add to viewer list for owner would go here in a real backend scenario
   };
 
   return {
     stories,
+    isLoading,
     activeStoryIndex,
     activeItemIndex,
     viewStory,

@@ -1,14 +1,15 @@
-
 import React, { useState } from 'react';
 import { Story } from '../../types';
 import { StoryCircle } from './StoryCircle';
 import { useStories } from '../../hooks/useStories';
 import { StoryViewer } from './StoryViewer';
 import { CreateStoryModal } from './CreateStoryModal';
+import { StorySkeleton } from '../common/LoadingStates';
 
 export const StoriesBar: React.FC = () => {
   const { 
     stories, 
+    isLoading,
     activeStoryIndex, 
     activeItemIndex,
     viewStory, 
@@ -25,8 +26,16 @@ export const StoriesBar: React.FC = () => {
   const myStory = stories.find(s => s.userId === 'me');
   const otherStories = stories.filter(s => s.userId !== 'me');
 
+  if (isLoading) {
+    return (
+      <div className="relative mb-6">
+        <StorySkeleton />
+      </div>
+    );
+  }
+
   return (
-    <>
+    <div className="animate-fade-in">
       <div className="relative mb-6">
         <div className="flex space-x-4 overflow-x-auto pb-4 no-scrollbar px-1 snap-x">
           {/* Add Story Button */}
@@ -75,6 +84,6 @@ export const StoriesBar: React.FC = () => {
         onClose={() => setIsCreating(false)} 
         onSubmit={addStory} 
       />
-    </>
+    </div>
   );
 };
