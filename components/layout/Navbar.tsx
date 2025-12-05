@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Home, Search, MessageCircle, Bell, LayoutGrid, ChevronDown, BookOpen, Users } from 'lucide-react';
+import { Home, Search, MessageCircle, Bell, LayoutGrid, ChevronDown, BookOpen, Users, Settings, LogOut } from 'lucide-react';
 import { ViewState } from '../../types';
 import { CURRENT_USER } from '../../data/index';
 import { Avatar } from '../common/Avatar';
@@ -10,12 +11,14 @@ interface NavProps {
 }
 
 export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
+
   return (
     <nav className="sticky top-0 z-50 w-full bg-white shadow-sm border-b border-gray-100 h-14">
       {/* Container - flex layout with proper spacing */}
       <div className="max-w-[1920px] mx-auto px-4 h-full flex justify-between items-center">
         
-        {/* LEFT: Logo & Search - Responsive Width */}
+        {/* LEFT: Logo & Search */}
         <div className="flex items-center space-x-2 md:space-x-3 flex-shrink-0 md:w-[260px] lg:w-[260px] xl:w-[320px]">
           <div className="flex items-center cursor-pointer flex-shrink-0" onClick={() => setView('feed')}>
              <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
@@ -23,7 +26,7 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
-            {/* Logo Text - Hidden on small mobile, visible on larger screens */}
+            {/* Logo Text */}
             <span className="ml-2 text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-secondary-600 hidden sm:block">
               HealSpace
             </span>
@@ -46,7 +49,7 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
           </button>
         </div>
 
-        {/* CENTER: Navigation Icons - Hidden on Mobile */}
+        {/* CENTER: Navigation Icons */}
         <div className="hidden md:flex items-center justify-center space-x-1 lg:space-x-2 flex-1 max-w-[680px] px-2 h-full">
            <NavIcon active={currentView === 'feed'} onClick={() => setView('feed')} icon={Home} label="Home" />
            <NavIcon active={false} onClick={() => setView('feed')} icon={BookOpen} label="Stories" />
@@ -54,28 +57,42 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView }) => {
            <NavIcon active={currentView === 'messages'} onClick={() => setView('messages')} icon={MessageCircle} label="Messages" badge={2} />
         </div>
 
-        {/* RIGHT: Profile & Actions - Responsive Width */}
+        {/* RIGHT: Profile & Actions */}
         <div className="flex items-center justify-end space-x-2 flex-shrink-0 md:w-[260px] lg:w-[260px] xl:w-[320px]">
-           {/* User Chip - Hidden on smaller screens */}
+           {/* User Chip */}
            <div className="hidden xl:flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-1.5 rounded-full pr-4 transition-colors mr-2" onClick={() => setView('profile')}>
               <Avatar src={CURRENT_USER.avatar} alt="Profile" size="sm" />
               <span className="text-sm font-semibold text-gray-900">{CURRENT_USER.name.split(' ')[0]}</span>
            </div>
 
            <NavActionBtn icon={LayoutGrid} label="Menu" className="hidden md:flex" />
-           <NavActionBtn icon={MessageCircle} label="Messenger" badge={2} className="xl:hidden hidden md:flex" />
+           <NavActionBtn icon={MessageCircle} label="Messenger" badge={2} className="xl:hidden hidden md:flex" onClick={() => setView('messages')} />
            <NavActionBtn icon={Bell} label="Notifications" badge={5} />
            
+           {/* Desktop Dropdown */}
+           <div className="relative">
+             <div className="cursor-pointer p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors hidden md:flex" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+               <ChevronDown className="w-5 h-5 text-gray-700" />
+             </div>
+             {showProfileMenu && (
+               <div className="absolute right-0 top-12 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 animate-in fade-in zoom-in-95">
+                 <button onClick={() => { setView('profile'); setShowProfileMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                   <Users className="w-4 h-4 mr-2" /> Profile
+                 </button>
+                 <button onClick={() => { setView('settings'); setShowProfileMenu(false); }} className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                   <Settings className="w-4 h-4 mr-2" /> Settings
+                 </button>
+                 <div className="border-t border-gray-100 my-1"></div>
+                 <button className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center">
+                   <LogOut className="w-4 h-4 mr-2" /> Log Out
+                 </button>
+               </div>
+             )}
+           </div>
+
            {/* Mobile Profile Avatar */}
            <div className="relative md:hidden" onClick={() => setView('profile')}>
              <Avatar src={CURRENT_USER.avatar} alt="Profile" size="sm" />
-           </div>
-           
-           {/* Desktop Dropdown */}
-           <div className="hidden md:flex relative cursor-pointer" onClick={() => setView('profile')}>
-             <div className="p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors">
-               <ChevronDown className="w-5 h-5 text-gray-700" />
-             </div>
            </div>
         </div>
       </div>
@@ -97,8 +114,8 @@ const NavIcon: React.FC<{ active: boolean; onClick: () => void; icon: any; label
   </div>
 );
 
-const NavActionBtn: React.FC<{ icon: any; label: string; badge?: number; className?: string }> = ({ icon: Icon, label, badge, className = '' }) => (
-  <button className={`relative p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors group flex-shrink-0 ${className}`}>
+const NavActionBtn: React.FC<{ icon: any; label: string; badge?: number; className?: string; onClick?: () => void }> = ({ icon: Icon, label, badge, className = '', onClick }) => (
+  <button onClick={onClick} className={`relative p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors group flex-shrink-0 ${className}`}>
     <Icon className="w-5 h-5 text-gray-800" />
     {badge && (
       <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[19px] h-[19px] px-1 bg-red-500 text-white text-[10px] font-bold rounded-full border-2 border-white">

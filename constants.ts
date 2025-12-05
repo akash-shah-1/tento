@@ -108,7 +108,15 @@ export const HEALERS: Healer[] = [
     coverImage: 'https://picsum.photos/seed/office1/800/300',
     about: 'I specialize in helping individuals recover from complex trauma using evidence-based approaches including EMDR and Somatic Experiencing.',
     credentials: ['PhD Clinical Psychology', 'Certified EMDR Therapist', '10+ Years Experience'],
-    location: 'New York, NY (Remote available)'
+    location: 'New York, NY (Remote available)',
+    isVerified: true,
+    languages: ['English', 'Spanish'],
+    experience: '12 Years',
+    nextAvailable: 'Tomorrow, 2:00 PM',
+    reviews: [
+      { id: 'r1', userName: 'Anonymous', rating: 5, date: '2 days ago', comment: 'Dr. Stones changed my life. Her patience is unmatched.' },
+      { id: 'r2', userName: 'Sarah K.', rating: 5, date: '1 week ago', comment: 'Highly recommend for anyone dealing with PTSD.' }
+    ]
   },
   {
     id: 'h2',
@@ -122,7 +130,14 @@ export const HEALERS: Healer[] = [
     coverImage: 'https://picsum.photos/seed/office2/800/300',
     about: 'Helping you reconnect with your body and release stored tension through gentle somatic practices.',
     credentials: ['SEP Certified', 'Licensed Massage Therapist', 'Yoga Instructor'],
-    location: 'San Francisco, CA'
+    location: 'San Francisco, CA',
+    isVerified: true,
+    languages: ['English'],
+    experience: '8 Years',
+    nextAvailable: 'Wed, 10:00 AM',
+    reviews: [
+      { id: 'r3', userName: 'Mike T.', rating: 5, date: '3 weeks ago', comment: 'Incredible bodywork. I feel lighter.' }
+    ]
   },
   {
     id: 'h3',
@@ -136,7 +151,12 @@ export const HEALERS: Healer[] = [
     coverImage: 'https://picsum.photos/seed/artstudio/800/300',
     about: 'Using creativity to bridge the gap between pain and healing when words are not enough.',
     credentials: ['MA Art Therapy', 'Licensed Counselor'],
-    location: 'Austin, TX (Remote available)'
+    location: 'Austin, TX (Remote available)',
+    isVerified: false,
+    languages: ['English', 'French'],
+    experience: '5 Years',
+    nextAvailable: 'Today, 4:00 PM',
+    reviews: []
   },
   {
     id: 'h4',
@@ -150,7 +170,12 @@ export const HEALERS: Healer[] = [
     coverImage: 'https://picsum.photos/seed/office3/800/300',
     about: 'Walking beside you through the darkest valleys of loss.',
     credentials: ['LCSW', 'Certified Grief Educator'],
-    location: 'Chicago, IL'
+    location: 'Chicago, IL',
+    isVerified: true,
+    languages: ['English', 'Korean'],
+    experience: '15+ Years',
+    nextAvailable: 'Fri, 11:30 AM',
+    reviews: []
   }
 ];
 

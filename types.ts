@@ -7,6 +7,37 @@ export interface User {
   isAnonymous?: boolean;
 }
 
+export interface UserSettings {
+  email: string;
+  phone: string;
+  twoFactor: boolean;
+  visibility: 'Public' | 'Community' | 'Private';
+  activityStatus: boolean;
+  notifications: {
+    push: boolean;
+    email: boolean;
+    messages: boolean;
+    comments: boolean;
+    reactions: boolean;
+    sessions: boolean;
+  };
+  theme: 'Light' | 'Dark' | 'Auto';
+}
+
+export interface Session {
+  id: string;
+  healerId: string;
+  healerName: string;
+  healerAvatar: string;
+  date: string;
+  time: string;
+  duration: number;
+  type: 'Video Call' | 'Audio Only';
+  status: 'Upcoming' | 'Completed' | 'Cancelled';
+  price: number;
+  notes?: string;
+}
+
 export interface Post {
   id: string;
   userId: string;
@@ -33,21 +64,22 @@ export interface Comment {
   image?: string;
   timestamp: string;
   likes: number;
-  reactions: Record<string, number>; // Breakdown
+  reactions: Record<string, number>;
   userReaction?: string;
-  replies?: Comment[]; // For UI structure
+  replies?: Comment[];
 }
 
 export interface StoryItem {
   id: string;
   type: 'image' | 'video' | 'text';
-  url?: string; // For image/video
-  text?: string; // For text stories
-  background?: string; // CSS gradient for text stories
-  timestamp: number; // Unix timestamp
+  url?: string;
+  text?: string;
+  background?: string;
+  timestamp: number;
   isViewed: boolean;
   viewers: { userId: string; name: string; avatar: string; reaction?: string }[];
-  duration: number; // seconds
+  duration: number;
+  font?: string;
 }
 
 export interface Story {
@@ -71,6 +103,17 @@ export interface Healer {
   about: string;
   credentials: string[];
   location: string;
+  isVerified: boolean;
+  languages: string[];
+  experience: string;
+  nextAvailable: string;
+  reviews: {
+    id: string;
+    userName: string;
+    rating: number;
+    date: string;
+    comment: string;
+  }[];
 }
 
 export interface Group {
@@ -97,4 +140,4 @@ export interface Conversation {
   timestamp: string;
 }
 
-export type ViewState = 'feed' | 'healers' | 'messages' | 'profile';
+export type ViewState = 'feed' | 'healers' | 'messages' | 'profile' | 'settings';

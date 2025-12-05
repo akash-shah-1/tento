@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Users, Clock, Bookmark, Video as VideoIcon, Layout, Calendar } from 'lucide-react';
+import { Users, Clock, Bookmark, Video as VideoIcon, Layout, Calendar, Settings } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { User } from '../../types';
 import { GROUPS } from '../../data/index';
@@ -13,7 +14,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, setView }) => {
   return (
     <div className="hidden md:block">
-      {/* Top is relative to the scroll container, not viewport, so top-6 gives it margin */}
+      {/* Top is relative to the scroll container, not viewport */}
       <div className="sticky top-6 h-[calc(100vh-120px)] overflow-y-auto no-scrollbar pr-2">
          <div className="mb-4">
            <SidebarItem 
@@ -27,14 +28,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, setV
          
          <SidebarItem icon={Users} label="Friends" />
          <SidebarItem icon={Clock} label="Memories" />
-         <SidebarItem icon={Bookmark} label="Saved" />
+         <SidebarItem icon={Bookmark} label="Saved" onClick={() => setView('profile')} />
          <SidebarItem icon={Users} label="Groups" />
          <SidebarItem icon={VideoIcon} label="Video" />
          <SidebarItem icon={Layout} label="Feeds" />
          <SidebarItem icon={Calendar} label="Events" />
          <div className="border-b border-gray-300 my-4 mx-4"></div>
+
+         <SidebarItem icon={Settings} label="Settings" onClick={() => setView('settings')} active={currentView === 'settings'} />
          
-         <h3 className="px-4 text-gray-500 font-semibold text-lg mb-2">Shortcuts</h3>
+         <h3 className="px-4 mt-4 text-gray-500 font-semibold text-lg mb-2">Shortcuts</h3>
          <SidebarItem icon={Users} label="Anxiety Support Circle" customIcon={<img src={GROUPS[0].image} className="w-8 h-8 rounded-lg" />} />
          <SidebarItem icon={Users} label="Mindful Living Daily" customIcon={<img src={GROUPS[2].image} className="w-8 h-8 rounded-lg" />} />
          

@@ -24,11 +24,6 @@ export const REACTION_MAP: Record<string, { label: string; emoji: string; color:
   Support: { label: 'Support', emoji: '🙏', color: 'text-purple-500' },
 };
 
-export const REACTIONS = Object.keys(REACTION_MAP).map(key => ({
-  id: key,
-  ...REACTION_MAP[key]
-}));
-
 export const CURRENT_USER: User = {
   id: 'me',
   name: 'Alex Morgan',
@@ -36,33 +31,36 @@ export const CURRENT_USER: User = {
   avatar: 'https://picsum.photos/seed/alex/200/200',
 };
 
-// Updated Stories Data Structure
+// ... Stories, Posts, Groups, Messages (Keeping existing data structure, focusing on Healers update) ...
 export const STORIES: Story[] = [
+  {
+    userId: 'me',
+    user: CURRENT_USER,
+    lastUpdated: Date.now() - 1000000,
+    allViewed: false,
+    items: [
+      { 
+        id: 's-me-1', 
+        type: 'image', 
+        url: 'https://picsum.photos/seed/my-story-healing/400/800', 
+        timestamp: Date.now() - 1000000, 
+        isViewed: false, 
+        duration: 5,
+        viewers: [
+          { userId: 'u1', name: 'Sarah J.', avatar: 'https://picsum.photos/seed/sarah/150/150', reaction: '❤️' },
+          { userId: 'u2', name: 'Dr. Mike', avatar: 'https://picsum.photos/seed/mike/150/150' },
+          { userId: 'u4', name: 'Luna L.', avatar: 'https://picsum.photos/seed/luna/150/150', reaction: '🔥' }
+        ] 
+      }
+    ]
+  },
   {
     userId: 'u1',
     user: { id: 'u1', name: 'Sarah J.', handle: '@sarah', avatar: 'https://picsum.photos/seed/sarah/150/150' },
     lastUpdated: Date.now() - 3600000,
     allViewed: false,
     items: [
-      { 
-        id: 's1-1', 
-        type: 'image', 
-        url: 'https://picsum.photos/seed/nature1/400/800', 
-        timestamp: Date.now() - 3600000, 
-        isViewed: false, 
-        duration: 5,
-        viewers: [] 
-      },
-      { 
-        id: 's1-2', 
-        type: 'text', 
-        text: 'So grateful for today! ☀️', 
-        background: 'linear-gradient(45deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%)', 
-        timestamp: Date.now() - 1800000, 
-        isViewed: false, 
-        duration: 5,
-        viewers: [] 
-      }
+      { id: '1', type: 'image', url: 'https://picsum.photos/seed/nature1/400/800', timestamp: Date.now() - 3600000, isViewed: false, viewers: [], duration: 5 }
     ]
   },
   {
@@ -71,32 +69,34 @@ export const STORIES: Story[] = [
     lastUpdated: Date.now() - 7200000,
     allViewed: false,
     items: [
-      { 
-        id: 's2-1', 
-        type: 'image', 
-        url: 'https://picsum.photos/seed/nature2/400/800', 
-        timestamp: Date.now() - 7200000, 
-        isViewed: false, 
-        duration: 5,
-        viewers: [] 
-      }
+      { id: '2', type: 'image', url: 'https://picsum.photos/seed/nature2/400/800', timestamp: Date.now() - 7200000, isViewed: false, viewers: [], duration: 5 }
     ]
   },
-  {
+   {
     userId: 'u3',
     user: { id: 'u3', name: 'Peace Grp', handle: '@peace', avatar: 'https://picsum.photos/seed/peace/150/150' },
     lastUpdated: Date.now() - 8000000,
     allViewed: true,
     items: [
-      { 
-        id: 's3-1', 
-        type: 'image', 
-        url: 'https://picsum.photos/seed/nature3/400/800', 
-        timestamp: Date.now() - 8000000, 
-        isViewed: true, 
-        duration: 5,
-        viewers: [] 
-      }
+      { id: '3', type: 'image', url: 'https://picsum.photos/seed/nature3/400/800', timestamp: Date.now() - 8000000, isViewed: true, viewers: [], duration: 5 }
+    ]
+  },
+  {
+    userId: 'u4',
+    user: { id: 'u4', name: 'Luna L.', handle: '@luna', avatar: 'https://picsum.photos/seed/luna/150/150' },
+    lastUpdated: Date.now() - 9000000,
+    allViewed: false,
+    items: [
+      { id: '4', type: 'image', url: 'https://picsum.photos/seed/nature4/400/800', timestamp: Date.now() - 9000000, isViewed: false, viewers: [], duration: 5 }
+    ]
+  },
+  {
+    userId: 'u5',
+    user: { id: 'u5', name: 'Hope C.', handle: '@hope', avatar: 'https://picsum.photos/seed/hope/150/150' },
+    lastUpdated: Date.now() - 10000000,
+    allViewed: true,
+    items: [
+      { id: '5', type: 'image', url: 'https://picsum.photos/seed/nature5/400/800', timestamp: Date.now() - 10000000, isViewed: true, viewers: [], duration: 5 }
     ]
   }
 ];
@@ -154,9 +154,17 @@ export const HEALERS: Healer[] = [
     rate: 150,
     avatar: 'https://picsum.photos/seed/emily/200/200',
     coverImage: 'https://picsum.photos/seed/office1/800/300',
-    about: 'I specialize in helping individuals recover from complex trauma using evidence-based approaches including EMDR and Somatic Experiencing.',
+    about: 'I specialize in helping individuals recover from complex trauma using evidence-based approaches including EMDR and Somatic Experiencing. My approach is warm, patient, and tailored to your unique journey.',
     credentials: ['PhD Clinical Psychology', 'Certified EMDR Therapist', '10+ Years Experience'],
-    location: 'New York, NY (Remote available)'
+    location: 'New York, NY (Remote available)',
+    isVerified: true,
+    languages: ['English', 'Spanish'],
+    experience: '12 Years',
+    nextAvailable: 'Tomorrow, 2:00 PM',
+    reviews: [
+      { id: 'r1', userName: 'Anonymous', rating: 5, date: '2 days ago', comment: 'Dr. Stones changed my life. Her patience is unmatched.' },
+      { id: 'r2', userName: 'Sarah K.', rating: 5, date: '1 week ago', comment: 'Highly recommend for anyone dealing with PTSD.' }
+    ]
   },
   {
     id: 'h2',
@@ -168,9 +176,16 @@ export const HEALERS: Healer[] = [
     rate: 120,
     avatar: 'https://picsum.photos/seed/marcus/200/200',
     coverImage: 'https://picsum.photos/seed/office2/800/300',
-    about: 'Helping you reconnect with your body and release stored tension through gentle somatic practices.',
+    about: 'Helping you reconnect with your body and release stored tension through gentle somatic practices. We work together to find safety in your own skin.',
     credentials: ['SEP Certified', 'Licensed Massage Therapist', 'Yoga Instructor'],
-    location: 'San Francisco, CA'
+    location: 'San Francisco, CA',
+    isVerified: true,
+    languages: ['English'],
+    experience: '8 Years',
+    nextAvailable: 'Wed, 10:00 AM',
+    reviews: [
+      { id: 'r3', userName: 'Mike T.', rating: 5, date: '3 weeks ago', comment: 'Incredible bodywork. I feel lighter.' }
+    ]
   },
   {
     id: 'h3',
@@ -182,9 +197,14 @@ export const HEALERS: Healer[] = [
     rate: 100,
     avatar: 'https://picsum.photos/seed/sarahj/200/200',
     coverImage: 'https://picsum.photos/seed/artstudio/800/300',
-    about: 'Using creativity to bridge the gap between pain and healing when words are not enough.',
+    about: 'Using creativity to bridge the gap between pain and healing when words are not enough. Suitable for all ages.',
     credentials: ['MA Art Therapy', 'Licensed Counselor'],
-    location: 'Austin, TX (Remote available)'
+    location: 'Austin, TX (Remote available)',
+    isVerified: false,
+    languages: ['English', 'French'],
+    experience: '5 Years',
+    nextAvailable: 'Today, 4:00 PM',
+    reviews: []
   },
   {
     id: 'h4',
@@ -196,9 +216,14 @@ export const HEALERS: Healer[] = [
     rate: 135,
     avatar: 'https://picsum.photos/seed/david/200/200',
     coverImage: 'https://picsum.photos/seed/office3/800/300',
-    about: 'Walking beside you through the darkest valleys of loss.',
+    about: 'Walking beside you through the darkest valleys of loss. You do not have to do this alone.',
     credentials: ['LCSW', 'Certified Grief Educator'],
-    location: 'Chicago, IL'
+    location: 'Chicago, IL',
+    isVerified: true,
+    languages: ['English', 'Korean'],
+    experience: '15+ Years',
+    nextAvailable: 'Fri, 11:30 AM',
+    reviews: []
   }
 ];
 

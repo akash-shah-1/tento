@@ -279,9 +279,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
         `}</style>
       </div>
 
-      {/* Viewer List Modal */}
+      {/* Viewer List Modal with Higher Z-Index */}
       {showViewers && (
-        <Modal isOpen={showViewers} onClose={() => { setShowViewers(false); setIsPaused(false); }} title="Story Views">
+        <Modal 
+          isOpen={showViewers} 
+          onClose={() => { setShowViewers(false); setIsPaused(false); }} 
+          title="Story Views"
+          zIndex={70} 
+        >
           <div className="space-y-4">
              {item.viewers && item.viewers.length > 0 ? (
                item.viewers.map(v => (

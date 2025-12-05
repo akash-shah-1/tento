@@ -10,7 +10,8 @@ export const useStories = () => {
   const [activeItemIndex, setActiveItemIndex] = useState<number>(0);
 
   useEffect(() => {
-    const stored = getFromStorage<Story[]>('healspace_stories', STORIES);
+    // Changed key to v2 to force load new mock data for demonstration
+    const stored = getFromStorage<Story[]>('healspace_stories_v2', STORIES);
     const now = Date.now();
     const validStories = stored.map(s => ({
       ...s,
@@ -45,7 +46,7 @@ export const useStories = () => {
         updatedStories[activeStoryIndex].allViewed = true;
     }
     setStories(updatedStories);
-    saveToStorage('healspace_stories', updatedStories);
+    saveToStorage('healspace_stories_v2', updatedStories);
 
     if (activeItemIndex < currentStory.items.length - 1) {
       setActiveItemIndex(prev => prev + 1);
@@ -100,7 +101,7 @@ export const useStories = () => {
     }
 
     setStories(updatedStories);
-    saveToStorage('healspace_stories', updatedStories);
+    saveToStorage('healspace_stories_v2', updatedStories);
   };
 
   const reactToStory = (reaction: string) => {

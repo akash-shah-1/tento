@@ -7,9 +7,10 @@ interface ShareDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   postUrl?: string;
+  title?: string;
 }
 
-export const ShareDrawer: React.FC<ShareDrawerProps> = ({ isOpen, onClose, postUrl = 'https://healspace.app/post/123' }) => {
+export const ShareDrawer: React.FC<ShareDrawerProps> = ({ isOpen, onClose, postUrl = 'https://healspace.app/post/123', title = "Share Post" }) => {
   const options = [
     { icon: PlusSquare, label: 'Share to Feed', color: 'bg-gray-100 text-gray-700' },
     { icon: MessageCircle, label: 'Send in Message', color: 'bg-blue-100 text-blue-600' },
@@ -20,7 +21,7 @@ export const ShareDrawer: React.FC<ShareDrawerProps> = ({ isOpen, onClose, postU
   ];
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Share Post">
+    <Modal isOpen={isOpen} onClose={onClose} title={title}>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {options.map((opt) => (
           <button

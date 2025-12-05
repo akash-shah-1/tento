@@ -1,11 +1,22 @@
 
 import React from 'react';
 
-export const Modal: React.FC<{ isOpen: boolean; onClose: () => void; title?: string; children: React.ReactNode }> = ({ isOpen, onClose, title, children }) => {
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  title?: string;
+  children: React.ReactNode;
+  zIndex?: number;
+}
+
+export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, zIndex = 50 }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+      style={{ zIndex }}
+    >
       {/* Mobile: Bottom Drawer, Desktop: Center Modal */}
       <div 
         className="bg-white w-full md:w-auto md:min-w-[480px] max-w-md md:max-w-lg rounded-t-2xl md:rounded-2xl shadow-xl overflow-hidden animate-slide-up md:animate-zoom-in-95 duration-200 max-h-[90vh] flex flex-col"
