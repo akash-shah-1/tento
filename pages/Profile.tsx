@@ -8,6 +8,7 @@ import { CreatePost } from '../components/feed/CreatePost';
 import { PostCard } from '../components/feed/PostCard';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { BecomeHealerModal } from '../components/healers/BecomeHealerModal';
+import { HealerDashboard } from '../components/healers/HealerDashboard'; // IMPORT HEALER DASHBOARD
 import { CURRENT_USER, POSTS, HEALERS } from '../data/index';
 import { usePosts } from '../hooks/usePosts';
 import { Session, ViewState } from '../types';
@@ -29,8 +30,8 @@ export const Profile: React.FC<{ showToast?: (msg: string) => void; setView?: (v
   const [postFilter, setPostFilter] = useState<'All' | 'Photos' | 'Videos'>('All');
   const [viewMode, setViewMode] = useState<'List' | 'Grid'>('List');
 
-  // Healer status mock (In real app, comes from user profile)
-  const [isHealer, setIsHealer] = useState(false); 
+  // Healer status mock (Set to true to show dashboard for demo purposes as requested)
+  const [isHealer, setIsHealer] = useState(true); 
 
   return (
     <div className="pb-20 md:pb-0 animate-in fade-in duration-300">
@@ -76,6 +77,10 @@ export const Profile: React.FC<{ showToast?: (msg: string) => void; setView?: (v
            </div>
          </div>
        </div>
+
+       {activeTab === 'dashboard' && (
+          <HealerDashboard />
+       )}
 
        {activeTab === 'posts' && (
          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
@@ -228,57 +233,6 @@ export const Profile: React.FC<{ showToast?: (msg: string) => void; setView?: (v
          </div>
        )}
 
-       {activeTab === 'dashboard' && (
-          <div className="space-y-6 animate-in fade-in">
-             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <StatCard icon={DollarSign} label="Total Earnings" value="$1,240" color="bg-green-100 text-green-600" />
-                <StatCard icon={Users} label="Total Clients" value="18" color="bg-blue-100 text-blue-600" />
-                <StatCard icon={Calendar} label="Sessions" value="42" color="bg-purple-100 text-purple-600" />
-                <StatCard icon={Star} label="Rating" value="4.9" color="bg-yellow-100 text-yellow-600" />
-             </div>
-             
-             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-               <Card className="md:col-span-2 p-6">
-                 <div className="flex justify-between items-center mb-6">
-                    <h3 className="font-bold text-gray-900">Weekly Availability</h3>
-                    <Button size="sm" variant="outline">Edit Hours</Button>
-                 </div>
-                 <div className="grid grid-cols-7 gap-2 text-center">
-                    {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(day => (
-                      <div key={day} className="space-y-2">
-                        <div className="text-xs font-bold text-gray-500 uppercase">{day}</div>
-                        <div className={`h-24 rounded-lg flex items-center justify-center text-xs ${day === 'Sat' || day === 'Sun' ? 'bg-gray-100 text-gray-400' : 'bg-green-50 text-green-700 border border-green-200'}`}>
-                          {day === 'Sat' || day === 'Sun' ? 'Off' : '9am - 5pm'}
-                        </div>
-                      </div>
-                    ))}
-                 </div>
-               </Card>
-               <Card className="p-6">
-                 <h3 className="font-bold text-gray-900 mb-4">Pending Requests</h3>
-                 <div className="space-y-4">
-                    {[1,2].map(i => (
-                      <div key={i} className="flex items-center justify-between">
-                         <div className="flex items-center space-x-2">
-                           <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
-                           <div>
-                             <p className="text-sm font-semibold">New Client</p>
-                             <p className="text-xs text-gray-500">Video Call • 50m</p>
-                           </div>
-                         </div>
-                         <div className="flex space-x-1">
-                           <button className="p-1 bg-green-100 text-green-600 rounded">✓</button>
-                           <button className="p-1 bg-red-100 text-red-600 rounded">✕</button>
-                         </div>
-                      </div>
-                    ))}
-                 </div>
-               </Card>
-             </div>
-          </div>
-       )}
-
-       {/* Edit Modal */}
        <EditProfileModal 
          isOpen={isEditOpen} 
          onClose={() => setIsEditOpen(false)} 
@@ -289,7 +243,6 @@ export const Profile: React.FC<{ showToast?: (msg: string) => void; setView?: (v
          }}
        />
 
-       {/* Become Healer Modal */}
        <BecomeHealerModal 
          isOpen={isHealerModalOpen}
          onClose={() => setIsHealerModalOpen(false)}
@@ -305,16 +258,4 @@ const TabButton: React.FC<{ active?: boolean; children: React.ReactNode; onClick
   >
     {children}
   </button>
-);
-
-const StatCard: React.FC<{ icon: any; label: string; value: string; color: string }> = ({ icon: Icon, label, value, color }) => (
-  <Card className="p-4 flex items-center space-x-4">
-    <div className={`p-3 rounded-full ${color}`}>
-      <Icon className="w-6 h-6" />
-    </div>
-    <div>
-      <p className="text-gray-500 text-sm font-medium">{label}</p>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-    </div>
-  </Card>
 );
