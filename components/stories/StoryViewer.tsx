@@ -44,9 +44,13 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   
   // Touch Physics State
   const [translateX, setTranslateX] = useState(0);
+  const [translateY, setTranslateY] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
   const touchCurrentX = useRef<number | null>(null);
+  const touchCurrentY = useRef<number | null>(null);
+  const lastTapTime = useRef<number>(0);
   
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -55,14 +59,14 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     setProgress(0);
     setIsPaused(false);
     setTranslateX(0);
+    setTranslateY(0);
     setIsDragging(false);
-  }, [item.id, initialStoryIndex]); // Reset when story changes
+  }, [item.id, initialStoryIndex]); 
 
   // Timer Logic
   useEffect(() => {
-    if (isPaused || isDragging) return; // Pause timer when dragging
+    if (isPaused || isDragging) return; 
 
-    // If video, progress is handled by onTimeUpdate
     if (item.type === 'video') return;
     
     const interval = setInterval(() => {
@@ -79,7 +83,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     return () => clearInterval(interval);
   }, [item, isPaused, isDragging, onNext]);
 
-  // Video specific logic
+  // Video logic
   useEffect(() => {
     if (item.type === 'video' && videoRef.current) {
       if (isPaused || isDragging) {
@@ -113,47 +117,84 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   // --- Advanced Touch Logic ---
   const handleTouchStart = (e: React.TouchEvent) => {
+    const now = Date.now();
+    // Double Tap Detection
+    if (now - lastTapTime.current < 300) {
+      handleReact('❤️');
+      setIsPaused(false); // Resume if paused by first tap
+      lastTapTime.current = 0;
+      return;
+    }
+    lastTapTime.current = now;
+
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
     touchCurrentX.current = e.touches[0].clientX;
+    touchCurrentY.current = e.touches[0].clientY;
     setIsDragging(true);
     setIsPaused(true);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (!touchStartX.current) return;
-    const currentX = e.touches[0].clientX;
-    touchCurrentX.current = currentX;
+    if (!touchStartX.current || !touchStartY.current) return;
     
-    // 1:1 Movement
-    const diff = currentX - touchStartX.current;
-    setTranslateX(diff);
+    const currentX = e.touches[0].clientX;
+    const currentY = e.touches[0].clientY;
+    touchCurrentX.current = currentX;
+    touchCurrentY.current = currentY;
+    
+    const diffX = currentX - touchStartX.current;
+    const diffY = currentY - touchStartY.current;
+
+    // Determine swipe direction dominance
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      // Horizontal Drag
+      setTranslateX(diffX);
+      setTranslateY(0);
+    } else {
+      // Vertical Drag (only allow pulling down or slightly up)
+      setTranslateY(diffY);
+      setTranslateX(0);
+    }
   };
 
   const handleTouchEnd = () => {
     setIsPaused(false);
     setIsDragging(false);
     
-    if (!touchStartX.current || !touchCurrentX.current) {
+    if (!touchStartX.current || !touchCurrentX.current || !touchStartY.current || !touchCurrentY.current) {
       setTranslateX(0);
+      setTranslateY(0);
       return;
     }
     
-    const diff = touchCurrentX.current - touchStartX.current;
-    const threshold = 100; // Swipe threshold
+    const diffX = touchCurrentX.current - touchStartX.current;
+    const diffY = touchCurrentY.current - touchStartY.current;
+    const threshold = 80;
 
-    if (Math.abs(diff) > threshold) { 
-      // Successful Swipe
-      if (diff > 0) {
-        onPrev(); // Swipe Right -> Prev
-      } else {
-        onNext(); // Swipe Left -> Next
+    // Horizontal Swipe
+    if (Math.abs(diffX) > Math.abs(diffY)) {
+      if (Math.abs(diffX) > threshold) { 
+        if (diffX > 0) onPrev(); 
+        else onNext();
+      }
+    } 
+    // Vertical Swipe
+    else {
+      if (diffY > 150) {
+        onClose(); // Swipe Down -> Close
+      } else if (diffY < -100) {
+        // Swipe Up -> Mock Options
+        alert("Swipe Up Options (Mock)"); 
       }
     }
     
-    // Reset or let the effect of prop change reset it
     setTranslateX(0); 
+    setTranslateY(0);
     touchStartX.current = null;
+    touchStartY.current = null;
     touchCurrentX.current = null;
+    touchCurrentY.current = null;
   };
 
   const isOwner = story.userId === 'me';
@@ -185,8 +226,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
            key={story.userId} 
            className={`relative w-full md:max-w-[400px] h-full md:h-[90vh] md:rounded-xl overflow-hidden bg-gray-900 shadow-2xl`}
            style={{ 
-             transform: `translateX(${translateX}px) scale(${isDragging ? 0.95 : 1})`,
-             transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+             transform: `translate(${translateX}px, ${translateY}px) scale(${isDragging ? 0.95 : 1})`,
+             opacity: Math.max(0, 1 - Math.abs(translateY) / 500), // Fade out on vertical drag
+             transition: isDragging ? 'none' : 'transform 0.3s ease-out, opacity 0.3s ease-out'
            }}
            onTouchStart={handleTouchStart}
            onTouchMove={handleTouchMove}

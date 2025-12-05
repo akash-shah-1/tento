@@ -6,7 +6,6 @@ import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
 import { FileUpload } from '../common/FileUpload';
 import { User } from '../../types';
-import { ConfettiBurst } from '../common/SuccessEffects';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -22,16 +21,12 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
   const [visibility, setVisibility] = useState<'Public' | 'Private' | 'Friends'>('Public');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
-  const [showConfetti, setShowConfetti] = useState(false);
 
-  if (!isOpen && !showConfetti) return null;
+  if (!isOpen) return null;
 
   const handleSubmit = () => {
     if (!content.trim() && !image) return;
     onSubmit(content, image || undefined, visibility, isAnonymous);
-    
-    // Trigger Success Animation
-    setShowConfetti(true);
     
     // Reset state
     setContent('');
@@ -39,11 +34,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
     setIsAnonymous(false);
     setShowUpload(false);
     
-    // Close after animation
-    setTimeout(() => {
-      setShowConfetti(false);
-      onClose();
-    }, 2000);
+    onClose();
   };
 
   const VisibilityIcon = {
@@ -52,18 +43,14 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
     'Private': Lock
   }[visibility];
 
-  if (showConfetti) {
-    return createPortal(<ConfettiBurst />, document.body);
-  }
-
   return createPortal(
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[60] flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
-        className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+        className="bg-white w-full h-full md:h-auto md:max-w-lg md:rounded-xl shadow-2xl overflow-hidden flex flex-col md:max-h-[90vh] animate-in slide-in-from-bottom-full md:zoom-in-95 duration-300"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="relative px-4 py-4 border-b border-gray-100 flex items-center justify-center">
+        <div className="relative px-4 py-4 border-b border-gray-100 flex items-center justify-center flex-shrink-0">
           <h2 className="text-lg font-bold text-gray-900">Create Post</h2>
           <button 
             onClick={onClose}
@@ -73,7 +60,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
           </button>
         </div>
 
-        {/* Body */}
+        {/* Body - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
           {/* User Profile Info */}
           <div className="flex items-center space-x-3 mb-4">
@@ -146,7 +133,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
             <span className="text-sm font-semibold text-gray-700 pl-1 hidden sm:block">Add to your post</span>
             <div className="flex items-center space-x-1 sm:space-x-2">
               <OptionButton 
-                icon={ImageIcon} // Reuse ImageIcon but logic handled by FileUpload now
+                icon={ImageIcon} 
                 color="text-green-500" 
                 onClick={() => setShowUpload(!showUpload)} 
                 active={showUpload}
@@ -167,8 +154,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="p-4 border-t border-gray-100">
+        {/* Footer - Sticky */}
+        <div className="p-4 border-t border-gray-100 bg-white sticky bottom-0 z-10 safe-pb">
           <Button 
             fullWidth 
             onClick={handleSubmit} 
