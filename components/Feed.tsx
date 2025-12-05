@@ -7,7 +7,7 @@ import { Button } from './common/Button';
 import { CURRENT_USER, HEALERS } from '../data/index';
 import { CreatePostModal } from './CreatePostModal';
 
-// --- Suggested Healers Rail (Minimal Circular Design) ---
+// --- Suggested Healers Rail (Enhanced Mobile Design) ---
 export const SuggestedHealersRail: React.FC<{ onSelect: (h: any) => void }> = ({ onSelect }) => {
   return (
     <div className="mb-6 block md:hidden border-b border-gray-100 pb-6">
@@ -15,24 +15,27 @@ export const SuggestedHealersRail: React.FC<{ onSelect: (h: any) => void }> = ({
         <h3 className="font-bold text-gray-900 text-sm">Suggested Professionals</h3>
         <span className="text-xs text-primary-600 font-medium cursor-pointer">See all</span>
       </div>
-      <div className="flex space-x-6 overflow-x-auto pb-2 no-scrollbar px-4">
+      <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar px-4">
         {HEALERS.slice(0, 6).map((healer) => (
           <div 
             key={healer.id} 
-            className="flex flex-col items-center flex-shrink-0 w-16 cursor-pointer group"
+            className="flex flex-col items-center flex-shrink-0 w-32 p-3 bg-gradient-to-b from-blue-50 to-white rounded-xl border border-gray-100 cursor-pointer shadow-sm active:scale-95 transition-transform"
             onClick={() => onSelect(healer)}
           >
             <div className="relative mb-2">
-              <img src={healer.avatar} className="w-16 h-16 rounded-full object-cover border border-gray-100 p-0.5 group-active:scale-95 transition-transform" alt="Avatar" />
+              <img src={healer.avatar} className="w-14 h-14 rounded-full object-cover border-2 border-white shadow-sm" alt="Avatar" />
               {healer.isVerified && (
                 <div className="absolute bottom-0 right-0 bg-white rounded-full p-[2px]">
                   <CheckCircle className="w-4 h-4 text-blue-500 fill-current" />
                 </div>
               )}
             </div>
-            <span className="text-xs font-medium text-gray-900 truncate w-20 text-center">{healer.name.split(' ')[0]}</span>
-            <span className="text-[10px] text-gray-500 truncate w-full text-center">{healer.title.split(' ')[0]}</span>
-            <button className="mt-2 text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-1 rounded-full">Follow</button>
+            <span className="text-xs font-bold text-gray-900 truncate w-full text-center mb-0.5">{healer.name.split(' ')[0]} {healer.name.split(' ')[1][0]}.</span>
+            <span className="text-[10px] text-gray-500 truncate w-full text-center mb-2">{healer.title.split(' ')[0]}</span>
+            <div className="flex items-center space-x-1 text-[10px] font-bold text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded-md mb-2">
+               <span>★</span><span>{healer.rating}</span>
+            </div>
+            <button className="w-full text-[10px] font-bold text-primary-600 bg-white border border-primary-100 px-2 py-1.5 rounded-lg shadow-sm">Connect</button>
           </div>
         ))}
       </div>
