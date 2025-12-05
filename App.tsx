@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { MainLayout } from './components/layout/MainLayout';
 import { Home } from './pages/Home';
@@ -39,7 +38,7 @@ const App: React.FC = () => {
       case 'messages':
         return <Messages />;
       case 'profile':
-        return <Profile showToast={showToast} />;
+        return <Profile showToast={showToast} setView={setCurrentView} />;
       case 'settings':
         return <Settings showToast={showToast} />;
       default:

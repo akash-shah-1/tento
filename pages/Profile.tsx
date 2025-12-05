@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Edit2, PlusSquare, ChevronDown, MapPin, Heart, Clock, Calendar, DollarSign, TrendingUp, Users, Star } from 'lucide-react';
+import { Edit2, PlusSquare, ChevronDown, MapPin, Heart, Clock, Calendar, DollarSign, TrendingUp, Users, Star, Settings as SettingsIcon } from 'lucide-react';
 import { Avatar } from '../components/common/Avatar';
 import { Button } from '../components/common/Button';
 import { Card } from '../components/common/Card';
@@ -9,7 +8,7 @@ import { PostCard } from '../components/feed/PostCard';
 import { EditProfileModal } from '../components/profile/EditProfileModal';
 import { CURRENT_USER, POSTS, HEALERS } from '../data/index';
 import { usePosts } from '../hooks/usePosts';
-import { Session } from '../types';
+import { Session, ViewState } from '../types';
 
 // Mock Sessions Data
 const SESSIONS: Session[] = [
@@ -17,7 +16,7 @@ const SESSIONS: Session[] = [
   { id: '2', healerId: 'h2', healerName: 'Marcus Thorne', healerAvatar: HEALERS[1].avatar, date: 'Aug 02, 2024', time: '10:00 AM', duration: 60, type: 'Video Call', status: 'Completed', price: 120 },
 ];
 
-export const Profile: React.FC<{ showToast?: (msg: string) => void }> = ({ showToast }) => {
+export const Profile: React.FC<{ showToast?: (msg: string) => void; setView?: (view: ViewState) => void }> = ({ showToast, setView }) => {
   const { addPost } = usePosts(CURRENT_USER);
   const [activeTab, setActiveTab] = useState<'posts'|'stories'|'sessions'|'saved'|'dashboard'>('posts');
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -47,9 +46,15 @@ export const Profile: React.FC<{ showToast?: (msg: string) => void }> = ({ showT
                  <h1 className="text-3xl font-bold text-gray-900">{user.name}</h1>
                  <p className="text-gray-500 font-semibold text-lg">{user.handle} • Joined Jan 2023</p>
               </div>
-              <div className="flex space-x-3 mt-6 md:mt-0 md:mb-4">
+              <div className="flex flex-wrap justify-center gap-2 mt-6 md:mt-0 md:mb-4">
                 <Button variant="primary" icon={PlusSquare}>Add Story</Button>
                 <Button variant="secondary" icon={Edit2} onClick={() => setIsEditOpen(true)}>Edit Profile</Button>
+                {/* Settings Button for Mobile/Tablet convenience */}
+                {setView && (
+                  <Button variant="outline" className="px-3" onClick={() => setView('settings')}>
+                    <SettingsIcon className="w-5 h-5 text-gray-600" />
+                  </Button>
+                )}
               </div>
            </div>
            

@@ -15,7 +15,8 @@ interface MainLayoutProps {
 
 export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, setView, setSelectedHealer }) => {
   // Determine if the current view needs full width (hiding the global right sidebar)
-  const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile';
+  // Added 'settings' to this list
+  const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile' || currentView === 'settings';
 
   return (
     <div className="h-screen w-full bg-[#F0F2F5] font-sans text-gray-900 flex flex-col overflow-hidden">
@@ -28,7 +29,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
            {/* Responsive Grid System */}
            <div className={`grid gap-6 w-full ${
              isFullWidthPage 
-               ? 'grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[320px_1fr]' // 2-Col Layout for Healers/Messages
+               ? 'grid-cols-1 md:grid-cols-[260px_1fr] xl:grid-cols-[320px_1fr]' // 2-Col Layout for Healers/Messages/Settings
                : 'grid-cols-1 md:grid-cols-[260px_1fr] lg:grid-cols-[260px_1fr_260px] xl:grid-cols-[320px_680px_320px] justify-center' // 3-Col Layout for Feed
            }`}>
               
