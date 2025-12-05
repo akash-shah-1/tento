@@ -5,6 +5,7 @@ import { Healer } from '../../types';
 import { Modal } from '../common/Modal';
 import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
+import { AnimatedCheckmark } from '../common/SuccessEffects';
 
 export const BookingModal: React.FC<{ isOpen: boolean; onClose: () => void; healer: Healer | null }> = ({ isOpen, onClose, healer }) => {
   const [step, setStep] = useState(1);
@@ -162,8 +163,8 @@ export const BookingModal: React.FC<{ isOpen: boolean; onClose: () => void; heal
 
         {step === 5 && (
            <div className="flex flex-col items-center justify-center py-8 animate-in zoom-in-95 text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6">
-                 <CheckCircle className="w-10 h-10 text-green-600" />
+              <div className="mb-6">
+                 <AnimatedCheckmark />
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h2>
               <p className="text-gray-500 mb-8 max-w-xs">Your session with {healer.name} is scheduled for <strong>{date} at {time}</strong>.</p>

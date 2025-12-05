@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, UserX } from 'lucide-react';
 import { HealerCard } from '../components/healers/HealerCard';
 import { HealerProfile } from '../components/healers/HealerProfile';
 import { HealerFilters } from '../components/healers/HealerFilters';
@@ -7,9 +8,12 @@ import { HEALERS } from '../data/index';
 import { Healer } from '../types';
 import { Button } from '../components/common/Button';
 import { HealerCardSkeleton } from '../components/common/LoadingStates';
+import { EmptyState } from '../components/common/EmptyState';
 
 export const HealersPage: React.FC<{ selectedHealer: Healer | null; setSelectedHealer: (h: Healer | null) => void; onBook: () => void }> = ({ selectedHealer, setSelectedHealer, onBook }) => {
   const [isLoading, setIsLoading] = useState(true);
+  // Simulating filter state that could result in empty list
+  const [filteredHealers, setFilteredHealers] = useState(HEALERS);
 
   useEffect(() => {
     // Simulate loading on mount
@@ -63,7 +67,7 @@ export const HealersPage: React.FC<{ selectedHealer: Healer | null; setSelectedH
         {/* Grid */}
         <div className="lg:col-span-3">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-gray-500 text-sm font-medium">{isLoading ? 'Finding healers...' : `${HEALERS.length} Healers available`}</p>
+            <p className="text-gray-500 text-sm font-medium">{isLoading ? 'Finding healers...' : `${filteredHealers.length} Healers available`}</p>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -74,16 +78,26 @@ export const HealersPage: React.FC<{ selectedHealer: Healer | null; setSelectedH
                 <HealerCardSkeleton />
                 <HealerCardSkeleton />
               </>
-            ) : (
-              HEALERS.map(healer => (
+            ) : filteredHealers.length > 0 ? (
+              filteredHealers.map(healer => (
                 <div key={healer.id} className="animate-fade-in">
                   <HealerCard healer={healer} onSelect={setSelectedHealer} />
                 </div>
               ))
+            ) : (
+              <div className="col-span-full">
+                <EmptyState 
+                  icon={UserX}
+                  title="No Healers Found"
+                  description="We couldn't find any healers matching your criteria. Try adjusting your filters."
+                  actionLabel="Clear Filters"
+                  onAction={() => setFilteredHealers(HEALERS)}
+                />
+              </div>
             )}
           </div>
           
-          {!isLoading && (
+          {!isLoading && filteredHealers.length > 0 && (
             <div className="mt-10 flex justify-center animate-fade-in">
                <Button variant="outline">Load More Healers</Button>
             </div>

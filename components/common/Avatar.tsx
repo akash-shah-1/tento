@@ -11,8 +11,12 @@ export const Avatar: React.FC<{ src: string; alt: string; size?: 'xs' | 'sm' | '
   };
 
   return (
-    <div className={`relative inline-block ${className}`}>
-      <img src={src} alt={alt} className={`${sizeClasses[size]} rounded-full object-cover border border-gray-100 bg-gray-100`} />
+    <div className={`relative inline-block group ${className}`}>
+      <img 
+        src={src} 
+        alt={alt} 
+        className={`${sizeClasses[size]} rounded-full object-cover border border-gray-100 bg-gray-100 transform transition-transform duration-300 group-hover:scale-110`} 
+      />
       {status && (
         <span className="absolute bottom-0 right-0 w-3 h-3 bg-accent-500 border-2 border-white rounded-full"></span>
       )}

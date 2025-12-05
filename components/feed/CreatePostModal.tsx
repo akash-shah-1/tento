@@ -6,6 +6,7 @@ import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
 import { FileUpload } from '../common/FileUpload';
 import { User } from '../../types';
+import { ConfettiBurst } from '../common/SuccessEffects';
 
 interface CreatePostModalProps {
   isOpen: boolean;
@@ -21,18 +22,28 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
   const [visibility, setVisibility] = useState<'Public' | 'Private' | 'Friends'>('Public');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
 
-  if (!isOpen) return null;
+  if (!isOpen && !showConfetti) return null;
 
   const handleSubmit = () => {
     if (!content.trim() && !image) return;
     onSubmit(content, image || undefined, visibility, isAnonymous);
+    
+    // Trigger Success Animation
+    setShowConfetti(true);
+    
     // Reset state
     setContent('');
     setImage(null);
     setIsAnonymous(false);
     setShowUpload(false);
-    onClose();
+    
+    // Close after animation
+    setTimeout(() => {
+      setShowConfetti(false);
+      onClose();
+    }, 2000);
   };
 
   const VisibilityIcon = {
@@ -40,6 +51,10 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
     'Friends': Users,
     'Private': Lock
   }[visibility];
+
+  if (showConfetti) {
+    return createPortal(<ConfettiBurst />, document.body);
+  }
 
   return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
