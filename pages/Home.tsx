@@ -1,19 +1,21 @@
+
 import React from 'react';
+import { Loader2 } from 'lucide-react';
 import { StoriesBar } from '../components/stories/StoriesBar';
 import { CreatePost } from '../components/feed/CreatePost';
 import { PostCard } from '../components/feed/PostCard';
 import { CURRENT_USER } from '../data/index';
 import { usePosts } from '../hooks/usePosts';
 import { PostSkeleton } from '../components/common/LoadingStates';
+import { useInfiniteScroll } from '../hooks/useInfiniteScroll';
 
 export const Home: React.FC = () => {
-  const { posts, isLoading, addPost, reactToPost, deletePost } = usePosts(CURRENT_USER);
+  const { posts, isLoading, isFetchingMore, addPost, reactToPost, deletePost, loadMorePosts } = usePosts(CURRENT_USER);
+  const triggerRef = useInfiniteScroll(loadMorePosts, isFetchingMore || isLoading);
 
   return (
     <>
-      {/* StoriesBar self-manages via useStories hook and handles its own loading */}
       <StoriesBar />
-      
       <CreatePost onPostCreate={addPost} />
       
       <div className="space-y-4">
@@ -36,12 +38,17 @@ export const Home: React.FC = () => {
         )}
       </div>
       
+      {/* Infinite Scroll Trigger & Spinner */}
       {!isLoading && (
-        <div className="text-center py-10 animate-fade-in">
-          <div className="inline-flex items-center justify-center p-3 bg-gray-100 rounded-full mb-3">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="ml-2 text-gray-600 font-medium text-sm">You're all caught up</span>
-          </div>
+        <div ref={triggerRef as React.RefObject<HTMLDivElement>} className="py-8 flex justify-center w-full">
+           {isFetchingMore ? (
+             <div className="flex items-center space-x-2 text-gray-500">
+               <Loader2 className="w-5 h-5 animate-spin" />
+               <span className="text-sm">Loading more posts...</span>
+             </div>
+           ) : (
+             <div className="h-10"></div> // Spacer to trigger intersection
+           )}
         </div>
       )}
     </>

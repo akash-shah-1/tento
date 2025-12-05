@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, MoreHorizontal, Heart, Send, Eye, Volume2, VolumeX } from 'lucide-react';
-import { Story, StoryItem } from '../../types';
+import { X, MoreHorizontal, Send, Eye, Volume2, VolumeX } from 'lucide-react';
+import { Story } from '../../types';
 import { Avatar } from '../common/Avatar';
 import { Modal } from '../common/Modal';
 
@@ -27,12 +27,9 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   onPrev,
   onReact
 }) => {
-  const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [currentStoryIndex, setCurrentStoryIndex] = useState(initialStoryIndex);
   
   useEffect(() => {
-    if (initialStoryIndex > currentStoryIndex) setDirection('right');
-    if (initialStoryIndex < currentStoryIndex) setDirection('left');
     setCurrentStoryIndex(initialStoryIndex);
   }, [initialStoryIndex]);
 
@@ -45,18 +42,25 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
   const [showViewers, setShowViewers] = useState(false);
   const [flyingEmojis, setFlyingEmojis] = useState<{id: number, char: string}[]>([]);
   
-  const videoRef = useRef<HTMLVideoElement>(null);
+  // Touch Physics State
+  const [translateX, setTranslateX] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
   const touchStartX = useRef<number | null>(null);
+  const touchCurrentX = useRef<number | null>(null);
+  
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   // Reset state on item change
   useEffect(() => {
     setProgress(0);
     setIsPaused(false);
-  }, [item.id]);
+    setTranslateX(0);
+    setIsDragging(false);
+  }, [item.id, initialStoryIndex]); // Reset when story changes
 
   // Timer Logic
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || isDragging) return; // Pause timer when dragging
 
     // If video, progress is handled by onTimeUpdate
     if (item.type === 'video') return;
@@ -73,18 +77,18 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     }, 100);
 
     return () => clearInterval(interval);
-  }, [item, isPaused, onNext]);
+  }, [item, isPaused, isDragging, onNext]);
 
   // Video specific logic
   useEffect(() => {
     if (item.type === 'video' && videoRef.current) {
-      if (isPaused) {
+      if (isPaused || isDragging) {
         videoRef.current.pause();
       } else {
         videoRef.current.play().catch(e => console.log("Autoplay prevented", e));
       }
     }
-  }, [isPaused, item]);
+  }, [isPaused, item, isDragging]);
 
   const handleVideoTimeUpdate = () => {
     if (videoRef.current) {
@@ -107,50 +111,85 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
     }, 2000);
   };
 
+  // --- Advanced Touch Logic ---
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+    setIsDragging(true);
     setIsPaused(true);
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    setIsPaused(false);
+  const handleTouchMove = (e: React.TouchEvent) => {
     if (!touchStartX.current) return;
+    const currentX = e.touches[0].clientX;
+    touchCurrentX.current = currentX;
     
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX.current - touchEndX;
+    // 1:1 Movement
+    const diff = currentX - touchStartX.current;
+    setTranslateX(diff);
+  };
 
-    if (Math.abs(diff) > 50) { 
-      if (diff > 0) onNext(); 
-      else onPrev(); 
+  const handleTouchEnd = () => {
+    setIsPaused(false);
+    setIsDragging(false);
+    
+    if (!touchStartX.current || !touchCurrentX.current) {
+      setTranslateX(0);
+      return;
     }
+    
+    const diff = touchCurrentX.current - touchStartX.current;
+    const threshold = 100; // Swipe threshold
+
+    if (Math.abs(diff) > threshold) { 
+      // Successful Swipe
+      if (diff > 0) {
+        onPrev(); // Swipe Right -> Prev
+      } else {
+        onNext(); // Swipe Left -> Next
+      }
+    }
+    
+    // Reset or let the effect of prop change reset it
+    setTranslateX(0); 
     touchStartX.current = null;
+    touchCurrentX.current = null;
   };
 
   const isOwner = story.userId === 'me';
 
   return createPortal(
     <>
-      <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center">
+      <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center overflow-hidden">
         
-        {/* Click Navigation Zones */}
-        <div 
-          className="absolute inset-y-0 left-0 w-1/4 z-20 cursor-pointer" 
-          onClick={(e) => { e.stopPropagation(); onPrev(); }}
-          onMouseDown={() => setIsPaused(true)} 
-          onMouseUp={() => setIsPaused(false)}
-        ></div>
-        <div 
-          className="absolute inset-y-0 right-0 w-1/4 z-20 cursor-pointer" 
-          onClick={(e) => { e.stopPropagation(); onNext(); }}
-          onMouseDown={() => setIsPaused(true)} 
-          onMouseUp={() => setIsPaused(false)}
-        ></div>
+        {/* Click Navigation Zones (Only when not dragging) */}
+        {!isDragging && (
+          <>
+            <div 
+              className="absolute inset-y-0 left-0 w-1/4 z-20 cursor-pointer" 
+              onClick={(e) => { e.stopPropagation(); onPrev(); }}
+              onMouseDown={() => setIsPaused(true)} 
+              onMouseUp={() => setIsPaused(false)}
+            ></div>
+            <div 
+              className="absolute inset-y-0 right-0 w-1/4 z-20 cursor-pointer" 
+              onClick={(e) => { e.stopPropagation(); onNext(); }}
+              onMouseDown={() => setIsPaused(true)} 
+              onMouseUp={() => setIsPaused(false)}
+            ></div>
+          </>
+        )}
 
-        {/* Story Container */}
+        {/* Story Container with Transform */}
         <div 
            key={story.userId} 
-           className={`relative w-full md:max-w-[400px] h-full md:h-[90vh] md:rounded-xl overflow-hidden bg-gray-900 shadow-2xl ${direction === 'right' ? 'story-slide-enter-right' : 'story-slide-enter-left'}`}
+           className={`relative w-full md:max-w-[400px] h-full md:h-[90vh] md:rounded-xl overflow-hidden bg-gray-900 shadow-2xl`}
+           style={{ 
+             transform: `translateX(${translateX}px) scale(${isDragging ? 0.95 : 1})`,
+             transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+           }}
            onTouchStart={handleTouchStart}
+           onTouchMove={handleTouchMove}
            onTouchEnd={handleTouchEnd}
         >
           {/* Media Content */}
@@ -169,7 +208,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
                />
                <button 
                  onClick={(e) => { e.stopPropagation(); setIsMuted(!isMuted); }}
-                 className="absolute top-20 right-4 z-40 p-2 bg-black/50 rounded-full text-white backdrop-blur-sm"
+                 className="absolute top-20 right-4 z-40 p-2 bg-black/50 rounded-full text-white backdrop-blur-sm pointer-events-auto"
                >
                  {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
                </button>
@@ -182,8 +221,11 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
             </div>
           )}
 
-          {/* Overlay Interface */}
-          <div className="absolute inset-0 z-30 pointer-events-none flex flex-col">
+          {/* Overlay Interface (Fade out when dragging) */}
+          <div 
+            className="absolute inset-0 z-30 pointer-events-none flex flex-col transition-opacity duration-200"
+            style={{ opacity: isDragging ? 0.5 : 1 }}
+          >
             
             {/* Top Bar */}
             <div className="p-4 pt-12 md:pt-4 bg-gradient-to-b from-black/50 to-transparent">

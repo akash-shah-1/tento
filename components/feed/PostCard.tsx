@@ -8,6 +8,8 @@ import { ReactionPicker } from './ReactionPicker';
 import { ShareDrawer } from './ShareDrawer';
 import { CommentSection } from './comments/CommentSection';
 import { REACTION_MAP } from '../../utils/constants';
+import { Modal } from '../common/Modal'; // Import Modal
+import { useMediaQuery } from '../../hooks/useMediaQuery'; // Import hook
 
 interface PostCardProps {
   post: Post;
@@ -21,6 +23,9 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
   const [showOptions, setShowOptions] = useState(false);
   const [showShareDrawer, setShowShareDrawer] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  
+  // Responsive check
+  const isMobile = useMediaQuery('(max-width: 768px)');
   
   // Refs for timers and touch handling
   const reactionTimerRef = useRef<any>(null);
@@ -197,15 +202,29 @@ export const PostCard: React.FC<PostCardProps> = ({ post, onReact, onDelete }) =
             <ActionButton 
               icon={MessageSquare} 
               label="Comment" 
-              onClick={() => setShowComments(!showComments)} 
+              onClick={() => setShowComments(true)} 
             />
             <ActionButton icon={Share2} label="Share" onClick={() => setShowShareDrawer(true)} />
           </div>
         </div>
 
-        {/* Comment Section */}
-        {showComments && <CommentSection postId={post.id} />}
+        {/* Desktop Comment Section (Inline) */}
+        {!isMobile && showComments && <CommentSection postId={post.id} />}
       </Card>
+
+      {/* Mobile Comment Drawer */}
+      {isMobile && (
+        <Modal 
+          isOpen={showComments} 
+          onClose={() => setShowComments(false)}
+          title="Comments"
+          zIndex={60}
+        >
+          <div className="-mx-6 -my-4">
+            <CommentSection postId={post.id} />
+          </div>
+        </Modal>
+      )}
 
       <ShareDrawer 
         isOpen={showShareDrawer} 

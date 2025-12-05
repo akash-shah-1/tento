@@ -7,10 +7,10 @@ import { getFromStorage, saveToStorage } from '../utils/storage';
 export const usePosts = (currentUser: User) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFetchingMore, setIsFetchingMore] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      // Initialize with mock data if storage is empty
       const storedPosts = getFromStorage<Post[]>('healspace_posts', []);
       if (storedPosts.length === 0) {
         setPosts(POSTS);
@@ -19,10 +19,22 @@ export const usePosts = (currentUser: User) => {
         setPosts(storedPosts);
       }
       setIsLoading(false);
-    }, 1500); // Simulate network delay
+    }, 1500); 
 
     return () => clearTimeout(timer);
   }, []);
+
+  const loadMorePosts = () => {
+    if (isFetchingMore) return;
+    setIsFetchingMore(true);
+    
+    setTimeout(() => {
+      const morePosts = POSTS.map(p => ({ ...p, id: p.id + Date.now() })); // Mock new ids
+      const updated = [...posts, ...morePosts];
+      setPosts(updated);
+      setIsFetchingMore(false);
+    }, 1500);
+  };
 
   const addPost = (content: string, image: string | undefined, visibility: 'Public' | 'Private' | 'Friends', isAnonymous: boolean) => {
     const newPost: Post = {
@@ -49,13 +61,9 @@ export const usePosts = (currentUser: User) => {
   const reactToPost = (postId: string, reactionType: string = 'Like') => {
     const updatedPosts = posts.map(post => {
       if (post.id === postId) {
-        // Check if user is clicking the EXACT same reaction they already have
         const isSameReaction = post.userReaction === reactionType;
         
-        // CASE 1: Post is already reacted to
         if (post.isLiked) {
-            // Sub-case A: Clicking the SAME reaction -> Toggle OFF (Unlike)
-            // Or if clicking the main "Like" button (which defaults to 'Like' type) when currently 'Like'
             if (isSameReaction) {
                 return {
                     ...post,
@@ -64,9 +72,6 @@ export const usePosts = (currentUser: User) => {
                     userReaction: undefined
                 };
             }
-            
-            // Sub-case B: Clicking a DIFFERENT reaction (e.g. was 'Like', now 'Love') 
-            // -> Switch Reaction (Count stays same, just type changes)
             return {
                 ...post,
                 isLiked: true,
@@ -74,7 +79,6 @@ export const usePosts = (currentUser: User) => {
             };
         }
 
-        // CASE 2: Post is NOT liked -> Toggle ON
         return {
             ...post,
             isLiked: true,
@@ -94,5 +98,5 @@ export const usePosts = (currentUser: User) => {
     saveToStorage('healspace_posts', updatedPosts);
   };
 
-  return { posts, isLoading, addPost, reactToPost, deletePost };
+  return { posts, isLoading, isFetchingMore, addPost, reactToPost, deletePost, loadMorePosts };
 };
