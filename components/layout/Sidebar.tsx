@@ -48,10 +48,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, setV
              <SidebarItem icon={Users} label="Friends" />
              {/* <SidebarItem icon={Clock} label="Memories" /> */}
              <SidebarItem icon={Bookmark} label="Saved" onClick={() => setView('profile')} />
-             <SidebarItem icon={Users} label="Groups" />
+             <SidebarItem icon={Users} label="Groups" onClick={() => setView('groups')} active={currentView === 'groups'} />
              {/* <SidebarItem icon={VideoIcon} label="Video" /> */}
              {/* <SidebarItem icon={Layout} label="Feeds" /> */}
-             <SidebarItem icon={Calendar} label="Events" />
+             <SidebarItem icon={Calendar} label="Events" onClick={() => setView('events')} active={currentView === 'events'} />
              <SidebarItem icon={ChevronDown} label="See more" />
            </div>
 
@@ -68,8 +68,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentUser, currentView, setV
                 <span className="text-blue-500 text-xs opacity-0 group-hover:opacity-100 transition-opacity">Edit</span>
               </div>
               <div className="space-y-1">
-                <SidebarItem icon={Users} label="Anxiety Support Circle" customIcon={<img src={GROUPS[0].image} className="w-8 h-8 rounded-lg object-cover" />} />
-                <SidebarItem icon={Users} label="Mindful Living Daily" customIcon={<img src={GROUPS[2].image} className="w-8 h-8 rounded-lg object-cover" />} />
+                <SidebarItem icon={Users} label="Anxiety Support Circle" customIcon={<img src={GROUPS[0].image} className="w-8 h-8 rounded-lg object-cover" />} onClick={() => setView('groups')} />
+                <SidebarItem icon={Users} label="Mindful Living Daily" customIcon={<img src={GROUPS[2].image} className="w-8 h-8 rounded-lg object-cover" />} onClick={() => setView('groups')} />
               </div>
            </div>
            

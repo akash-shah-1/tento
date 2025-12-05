@@ -227,10 +227,10 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView, onSearch }) =
                    <button onClick={() => { setView('profile'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
                      <User className="w-5 h-5 mr-3 text-gray-400" /> Profile
                    </button>
-                   <button onClick={() => { setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                   <button onClick={() => { setView('groups'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
                      <Users className="w-5 h-5 mr-3 text-blue-500" /> Groups
                    </button>
-                   <button onClick={() => { setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                   <button onClick={() => { setView('events'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
                      <Calendar className="w-5 h-5 mr-3 text-red-500" /> Events
                    </button>
                    <button onClick={() => { setView('profile'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">

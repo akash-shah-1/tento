@@ -8,6 +8,8 @@ import { Profile } from './pages/Profile';
 import { Settings } from './pages/Settings';
 import { MoodTracker } from './pages/MoodTracker';
 import { SearchResults } from './pages/SearchResults';
+import { Groups } from './pages/Groups';
+import { Events } from './pages/Events';
 import { BookingModal } from './components/healers/BookingModal';
 import { CreatePostModal } from './components/feed/CreatePostModal'; // Import Global Modal
 import { Toast } from './components/common/Toast';
@@ -84,6 +86,10 @@ const App: React.FC = () => {
               return <Settings showToast={showToast} />;
             case 'mood':
               return <MoodTracker />;
+            case 'groups':
+              return <Groups />;
+            case 'events':
+              return <Events />;
             case 'search':
               return <SearchResults query={searchQuery} setSelectedHealer={(h) => { setSelectedHealer(h); handleSetView('healers'); }} />;
             default:

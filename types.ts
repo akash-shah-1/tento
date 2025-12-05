@@ -122,6 +122,24 @@ export interface Group {
   image: string;
   members: number;
   category: string;
+  description?: string;
+  isJoined?: boolean;
+}
+
+export interface Event {
+  id: string;
+  title: string;
+  date: string;
+  day: string;
+  month: string;
+  time: string;
+  location: string;
+  image: string;
+  interestedCount: number;
+  description: string;
+  host: string;
+  category: string;
+  isInterested?: boolean;
 }
 
 export interface Message {
@@ -140,4 +158,4 @@ export interface Conversation {
   timestamp: string;
 }
 
-export type ViewState = 'feed' | 'healers' | 'messages' | 'profile' | 'settings' | 'mood' | 'search';
+export type ViewState = 'feed' | 'healers' | 'messages' | 'profile' | 'settings' | 'mood' | 'search' | 'groups' | 'events';
