@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Camera, Globe, Lock, Users, Link as LinkIcon, Instagram, Twitter, MessageCircle, Eye } from 'lucide-react';
 import { Modal } from '../common/Modal';
 import { Button } from '../common/Button';
+import { Input } from '../common/Input';
 import { User, UserSettings } from '../../types';
 
 interface EditProfileModalProps {
@@ -18,7 +19,6 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
   const [location, setLocation] = useState("Seattle, Washington");
   const [website, setWebsite] = useState("");
   const [instagram, setInstagram] = useState("");
-  const [twitter, setTwitter] = useState("");
   
   // Privacy Settings State
   const [visibility, setVisibility] = useState<'Public' | 'Community' | 'Private'>('Public');
@@ -26,6 +26,8 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
   const [sessionPrivacy, setSessionPrivacy] = useState<'Public' | 'Private'>('Private');
 
   const handleSave = () => {
+    // Simple validation check before saving
+    if (name.length < 2) return;
     onSave({ name, visibility }); 
     onClose();
   };
@@ -53,15 +55,15 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
         {/* Basic Info */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide border-b border-gray-100 pb-2">Basic Info</h3>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-            <input 
-              type="text" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg p-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            />
-          </div>
+          
+          <Input 
+            label="Name" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)}
+            validationRule={/^.{2,}$/}
+            errorMessage="Name must be at least 2 characters"
+            placeholder="Your full name"
+          />
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
@@ -75,56 +77,32 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
             <p className="text-xs text-gray-500 text-right mt-1">{bio.length}/500</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-            <div className="relative">
-               <input 
-                type="text" 
-                value={location} 
-                onChange={(e) => setLocation(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2.5 pl-9 focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              />
-              <div className="absolute left-3 top-3 text-gray-400">
-                 <MapPinIcon className="w-4 h-4" />
-              </div>
-            </div>
-          </div>
+          <Input 
+            label="Location"
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="City, Country"
+          />
         </div>
 
         {/* Social Links */}
         <div className="space-y-4">
           <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide border-b border-gray-100 pb-2">Social Links</h3>
           <div className="grid grid-cols-1 gap-3">
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Your Website"
-                value={website}
-                onChange={(e) => setWebsite(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2.5 pl-9"
-              />
-              <LinkIcon className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            </div>
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Instagram Username"
-                value={instagram}
-                onChange={(e) => setInstagram(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2.5 pl-9"
-              />
-              <Instagram className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            </div>
-            <div className="relative">
-              <input 
-                type="text" 
-                placeholder="Twitter/X Username"
-                value={twitter}
-                onChange={(e) => setTwitter(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg p-2.5 pl-9"
-              />
-              <Twitter className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            </div>
+            <Input 
+              label="Website"
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
+              placeholder="https://yoursite.com"
+              validationRule={/^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.-]*)*\/?$/}
+              errorMessage="Please enter a valid URL"
+            />
+            <Input 
+              label="Instagram"
+              value={instagram}
+              onChange={(e) => setInstagram(e.target.value)}
+              placeholder="@username"
+            />
           </div>
         </div>
 
@@ -189,12 +167,3 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onCl
     </Modal>
   );
 };
-
-// Mock Icon component for MapPin to avoid import conflict if needed, 
-// though standard Lucide import handles it. Reusing common pattern.
-const MapPinIcon = (props: any) => (
-  <svg {...props} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-  </svg>
-);

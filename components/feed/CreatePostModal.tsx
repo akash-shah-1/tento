@@ -1,9 +1,10 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
-import { X, Image as ImageIcon, Smile, MapPin, UserPlus, Globe, Lock, Users, EyeOff, ChevronDown } from 'lucide-react';
+import { X, Smile, MapPin, UserPlus, Globe, Lock, Users, EyeOff, ChevronDown, Image as ImageIcon } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
+import { FileUpload } from '../common/FileUpload';
 import { User } from '../../types';
 
 interface CreatePostModalProps {
@@ -19,17 +20,9 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [visibility, setVisibility] = useState<'Public' | 'Private' | 'Friends'>('Public');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showUpload, setShowUpload] = useState(false);
 
   if (!isOpen) return null;
-
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const url = URL.createObjectURL(file);
-      setImage(url);
-    }
-  };
 
   const handleSubmit = () => {
     if (!content.trim() && !image) return;
@@ -38,6 +31,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
     setContent('');
     setImage(null);
     setIsAnonymous(false);
+    setShowUpload(false);
     onClose();
   };
 
@@ -78,7 +72,6 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
                 {isAnonymous ? 'Anonymous Member' : currentUser.name}
               </h3>
               <div className="flex space-x-2 mt-1">
-                {/* Visibility Dropdown Trigger */}
                 <button 
                   onClick={() => {
                     const next = visibility === 'Public' ? 'Friends' : visibility === 'Friends' ? 'Private' : 'Public';
@@ -103,22 +96,28 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
             autoFocus
           />
 
-          {/* Image Preview */}
-          {image && (
-            <div className="relative mt-2 rounded-lg overflow-hidden border border-gray-200 group">
-              <img src={image} alt="Upload preview" className="w-full max-h-[300px] object-cover" />
-              <button 
-                onClick={() => setImage(null)}
-                className="absolute top-2 right-2 p-1.5 bg-white/80 hover:bg-white rounded-full shadow-sm text-gray-700"
-              >
-                <X className="w-4 h-4" />
-              </button>
+          {/* File Upload Section */}
+          {(showUpload || image) && (
+            <div className="mt-4">
+              {image ? (
+                <div className="relative rounded-lg overflow-hidden border border-gray-200 group">
+                  <img src={image} alt="Upload preview" className="w-full max-h-[300px] object-cover" />
+                  <button 
+                    onClick={() => setImage(null)}
+                    className="absolute top-2 right-2 p-1.5 bg-white/80 hover:bg-white rounded-full shadow-sm text-gray-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <FileUpload onFileSelect={(url) => setImage(url)} />
+              )}
             </div>
           )}
           
           {/* Emoji Picker Mock */}
           {showEmojiPicker && (
-             <div className="bg-gray-50 p-2 rounded-lg grid grid-cols-8 gap-1 mb-2 animate-in slide-in-from-top-2">
+             <div className="bg-gray-50 p-2 rounded-lg grid grid-cols-8 gap-1 mb-2 animate-in slide-in-from-top-2 mt-2">
                {['😀','😂','🥰','😢','😡','👍','🎉','🙏'].map(emoji => (
                  <button key={emoji} onClick={() => setContent(c => c + emoji)} className="text-2xl hover:bg-gray-200 rounded p-1 transition-colors">
                    {emoji}
@@ -131,7 +130,13 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
           <div className="mt-4 border border-gray-200 rounded-lg p-3 flex items-center justify-between shadow-sm">
             <span className="text-sm font-semibold text-gray-700 pl-1 hidden sm:block">Add to your post</span>
             <div className="flex items-center space-x-1 sm:space-x-2">
-              <OptionButton icon={ImageIcon} color="text-green-500" onClick={() => fileInputRef.current?.click()} tooltip="Photo/Video" />
+              <OptionButton 
+                icon={ImageIcon} // Reuse ImageIcon but logic handled by FileUpload now
+                color="text-green-500" 
+                onClick={() => setShowUpload(!showUpload)} 
+                active={showUpload}
+                tooltip="Photo/Video" 
+              />
               <OptionButton icon={UserPlus} color="text-blue-500" tooltip="Tag People" />
               <OptionButton icon={Smile} color="text-yellow-500" onClick={() => setShowEmojiPicker(!showEmojiPicker)} tooltip="Feeling/Activity" />
               <OptionButton icon={MapPin} color="text-red-500" tooltip="Check in" />
@@ -145,13 +150,6 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
               />
             </div>
           </div>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleImageUpload} 
-            className="hidden" 
-            accept="image/*" 
-          />
         </div>
 
         {/* Footer */}
@@ -178,7 +176,6 @@ const OptionButton: React.FC<{ icon: any; color: string; onClick?: () => void; a
     title={tooltip}
   >
     <Icon className={`w-6 h-6 ${color}`} />
-    {/* Tooltip */}
     <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-10">
       {tooltip}
     </span>
