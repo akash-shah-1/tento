@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Image as ImageIcon, Smile, MapPin, UserPlus, Globe, Lock, Users, EyeOff, ChevronDown } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
@@ -46,7 +47,7 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
     'Private': Lock
   }[visibility];
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div 
         className="bg-white w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
@@ -165,7 +166,8 @@ export const CreatePostModal: React.FC<CreatePostModalProps> = ({ isOpen, onClos
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
 

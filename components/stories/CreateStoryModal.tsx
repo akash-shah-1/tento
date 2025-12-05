@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X, Type, Image as ImageIcon, Camera, ChevronDown, Globe, RefreshCcw, Circle } from 'lucide-react';
 import { Button } from '../common/Button';
 
@@ -114,7 +115,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ isOpen, onCl
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div className="fixed inset-0 z-[70] bg-black md:bg-black/90 flex flex-col md:flex-row animate-in fade-in duration-200">
       
       {/* Mobile Close Button */}
@@ -233,6 +234,7 @@ export const CreateStoryModal: React.FC<CreateStoryModalProps> = ({ isOpen, onCl
            </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

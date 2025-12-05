@@ -1,5 +1,6 @@
 
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { X, MoreHorizontal, Heart, Send, Eye, Volume2, VolumeX } from 'lucide-react';
 import { Story, StoryItem } from '../../types';
 import { Avatar } from '../common/Avatar';
@@ -127,7 +128,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
 
   const isOwner = story.userId === 'me';
 
-  return (
+  return createPortal(
     <>
       <div className="fixed inset-0 z-[60] bg-black flex items-center justify-center">
         
@@ -306,6 +307,7 @@ export const StoryViewer: React.FC<StoryViewerProps> = ({
           </div>
         </Modal>
       )}
-    </>
+    </>,
+    document.body
   );
 };
