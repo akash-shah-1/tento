@@ -1,79 +1,61 @@
 
 import React from 'react';
-import { Heart, MessageSquare, Share2, MoreHorizontal, Image as ImageIcon, Smile, Lock, Globe, Users, Star, CheckCircle } from 'lucide-react';
+import { Heart, MessageSquare, Share2, MoreHorizontal, Image as ImageIcon, Smile, Lock, Globe, Users, Star, CheckCircle, Calendar, Bookmark, Clock } from 'lucide-react';
 import { Post, Story, User, Healer } from '../types';
 import { Card, Avatar, Button, Badge } from './Shared';
 import { CURRENT_USER, HEALERS } from '../constants';
 
-// --- Stories ---
+// --- Stories (Now handled in StoriesBar.tsx separately) ---
 export const StoryRail: React.FC<{ stories: Story[] }> = ({ stories }) => {
-  return (
-    <div className="relative mb-6">
-      <div className="flex space-x-4 overflow-x-auto pb-4 no-scrollbar px-1">
-        {/* Create Story */}
-        <div className="flex flex-col items-center space-y-1 min-w-[72px] cursor-pointer group">
-          <div className="relative w-16 h-16 rounded-full border-2 border-dashed border-primary-300 p-0.5 group-hover:border-primary-500 transition-colors flex items-center justify-center bg-gray-50">
-             <span className="text-2xl text-primary-500 font-light">+</span>
-          </div>
-          <span className="text-xs font-medium text-gray-700">Add Story</span>
-        </div>
+  return null; // Deprecated here, moved logic to StoriesBar
+};
 
-        {stories.map((story) => (
-          <div key={story.userId} className="flex flex-col items-center space-y-1 min-w-[72px] cursor-pointer group">
-            <div className={`rounded-full p-[2px] ${story.allViewed ? 'bg-gray-200' : 'bg-gradient-to-tr from-primary-500 to-secondary-500'}`}>
-              <div className="bg-white p-[2px] rounded-full">
-                <img 
-                  src={story.user.avatar} 
-                  alt={story.user.name} 
-                  className="w-14 h-14 rounded-full object-cover border border-gray-100 group-hover:scale-105 transition-transform duration-200" 
-                />
-              </div>
-            </div>
-            <span className="text-xs font-medium text-gray-700 truncate w-16 text-center">{story.user.name.split(' ')[0]}</span>
-          </div>
-        ))}
-      </div>
+// --- Mobile Shortcuts Grid (Refined) ---
+export const MobileShortcuts: React.FC = () => {
+  return (
+    <div className="grid grid-cols-4 gap-3 px-4 mb-6 md:hidden">
+       <ShortcutItem icon={Users} label="Groups" color="bg-blue-50 text-blue-600" />
+       <ShortcutItem icon={Calendar} label="Events" color="bg-red-50 text-red-600" />
+       <ShortcutItem icon={Bookmark} label="Saved" color="bg-purple-50 text-purple-600" />
+       <ShortcutItem icon={Smile} label="Friends" color="bg-green-50 text-green-600" />
     </div>
   );
 };
 
-// --- Mobile Suggested Healers Rail ---
+const ShortcutItem: React.FC<{ icon: any; label: string; color: string }> = ({ icon: Icon, label, color }) => (
+  <div className="flex flex-col items-center space-y-1.5 cursor-pointer group active:scale-95 transition-transform">
+    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-sm ${color}`}>
+      <Icon className="w-6 h-6" />
+    </div>
+    <span className="text-xs font-medium text-gray-600">{label}</span>
+  </div>
+);
+
+// --- Mobile Suggested Healers Rail (Minimal Circular Design) ---
 export const SuggestedHealersRail: React.FC<{ onSelect: (h: Healer) => void }> = ({ onSelect }) => {
   return (
-    <div className="mb-6 block md:hidden">
-      <div className="flex items-center justify-between px-1 mb-3">
-        <h3 className="font-bold text-gray-900">Suggested Healers</h3>
+    <div className="mb-6 block md:hidden border-b border-gray-100 pb-6">
+      <div className="flex items-center justify-between px-4 mb-4">
+        <h3 className="font-bold text-gray-900 text-sm">Suggested Professionals</h3>
         <span className="text-xs text-primary-600 font-medium">See all</span>
       </div>
-      <div className="flex space-x-3 overflow-x-auto pb-2 no-scrollbar px-1 snap-x">
-        {HEALERS.slice(0, 4).map((healer) => (
+      <div className="flex space-x-5 overflow-x-auto pb-2 no-scrollbar px-4">
+        {HEALERS.slice(0, 6).map((healer) => (
           <div 
             key={healer.id} 
-            className="snap-center min-w-[200px] bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-shrink-0"
+            className="flex flex-col items-center flex-shrink-0 w-16 cursor-pointer"
             onClick={() => onSelect(healer)}
           >
-            <div className="h-20 bg-gray-100 relative">
-              <img src={healer.coverImage} className="w-full h-full object-cover" alt="Cover" />
+            <div className="relative mb-2">
+              <img src={healer.avatar} className="w-16 h-16 rounded-full object-cover border border-gray-100 p-0.5" alt="Avatar" />
+              {healer.isVerified && (
+                <div className="absolute bottom-0 right-0 bg-white rounded-full p-[2px]">
+                  <CheckCircle className="w-4 h-4 text-blue-500 fill-current" />
+                </div>
+              )}
             </div>
-            <div className="px-3 pb-3 relative">
-              <div className="flex justify-between items-end -mt-8 mb-2">
-                 <img src={healer.avatar} className="w-14 h-14 rounded-full border-2 border-white shadow-sm object-cover bg-white" alt="Avatar" />
-                 <div className="flex items-center bg-yellow-50 px-1.5 py-0.5 rounded text-[10px] font-bold text-yellow-700 border border-yellow-100">
-                   <Star className="w-3 h-3 fill-current mr-0.5" /> {healer.rating}
-                 </div>
-              </div>
-              
-              <h4 className="font-bold text-sm text-gray-900 truncate">{healer.name}</h4>
-              <p className="text-xs text-primary-600 mb-2 truncate">{healer.title}</p>
-              
-              <div className="flex flex-wrap gap-1 mb-3 h-5 overflow-hidden">
-                {healer.specialization.slice(0, 2).map(spec => (
-                  <span key={spec} className="text-[10px] bg-gray-50 text-gray-600 px-1.5 py-0.5 rounded border border-gray-100">{spec}</span>
-                ))}
-              </div>
-              
-              <Button size="sm" fullWidth className="text-xs h-8">Book Session</Button>
-            </div>
+            <span className="text-xs font-medium text-gray-900 truncate w-20 text-center">{healer.name.split(' ')[0]} {healer.name.split(' ')[1][0]}.</span>
+            <span className="text-[10px] text-gray-500 truncate w-full text-center">{healer.title.split(' ')[0]}</span>
           </div>
         ))}
       </div>
@@ -112,10 +94,4 @@ export const CreatePost: React.FC<{ onClick: () => void }> = ({ onClick }) => {
       </div>
     </Card>
   );
-};
-
-// --- Post Card ---
-export const PostCard: React.FC<{ post: Post }> = ({ post }) => {
-  // ... (Keeping existing PostCard implementation but exported for re-use if needed, though PostCard.tsx handles main logic)
-  return null; 
 };
