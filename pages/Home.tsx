@@ -2,7 +2,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { StoriesBar } from '../components/stories/StoriesBar';
-import { CreatePost, SuggestedHealersRail, MobileShortcuts } from '../components/Feed'; // Import from Feed
+import { CreatePost, SuggestedHealersRail } from '../components/Feed';
 import { PostCard } from '../components/feed/PostCard';
 import { CURRENT_USER } from '../data/index';
 import { usePosts } from '../hooks/usePosts';
@@ -23,9 +23,6 @@ export const Home: React.FC<HomeProps> = ({ onOpenCreatePost, onSelectHealer }) 
     <>
       <StoriesBar />
       
-      {/* Mobile: Shortcuts (Groups, Events, etc) */}
-      <MobileShortcuts />
-
       {/* Mobile: Suggested Healers Rail */}
       <SuggestedHealersRail onSelect={onSelectHealer} />
 

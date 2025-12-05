@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Home, Search, MessageCircle, User, Bell, LayoutGrid, ChevronDown, LogOut, Settings, X, Clock, TrendingUp, ArrowLeft, Smile, Users } from 'lucide-react';
+import { Home, Search, MessageCircle, User, Bell, LayoutGrid, ChevronDown, LogOut, Settings, X, Clock, TrendingUp, ArrowLeft, Smile, Users, Calendar, Bookmark } from 'lucide-react';
 import { ViewState } from '../../types';
 import { CURRENT_USER, TRENDING_SEARCHES } from '../../data/index';
 import { Avatar } from '../common/Avatar';
@@ -12,7 +12,7 @@ interface NavProps {
   onSearch?: (query: string) => void;
 }
 
-// Reusable Search Component to ensure Mobile & Desktop have same features
+// Reusable Search Component
 const SearchInputWithDropdown: React.FC<{
   autoFocus?: boolean;
   onSearch?: (query: string) => void;
@@ -118,6 +118,7 @@ const SearchInputWithDropdown: React.FC<{
 export const Navbar: React.FC<NavProps> = ({ currentView, setView, onSearch }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showMobileSearch, setShowMobileSearch] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false); // Mobile Profile Dropdown
 
   // Mobile Search View Overlay
   if (showMobileSearch) {
@@ -189,8 +190,9 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView, onSearch }) =
            <NavActionBtn icon={MessageCircle} label="Messenger" badge={2} className="flex xl:hidden" onClick={() => setView('messages')} />
            <NavActionBtn icon={Bell} label="Notifications" badge={5} />
            
-           <div className="relative">
-             <div className="cursor-pointer p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors hidden md:flex" onClick={() => setShowProfileMenu(!showProfileMenu)}>
+           {/* Desktop Profile Dropdown */}
+           <div className="relative hidden md:block">
+             <div className="cursor-pointer p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors flex" onClick={() => setShowProfileMenu(!showProfileMenu)}>
                <ChevronDown className="w-5 h-5 text-gray-700" />
              </div>
              {showProfileMenu && (
@@ -209,8 +211,41 @@ export const Navbar: React.FC<NavProps> = ({ currentView, setView, onSearch }) =
              )}
            </div>
 
-           <div className="relative md:hidden" onClick={() => setView('profile')}>
-             <Avatar src={CURRENT_USER.avatar} alt="Profile" size="sm" />
+           {/* Mobile Profile Dropdown Trigger */}
+           <div className="relative md:hidden">
+             <div onClick={() => setShowMobileMenu(!showMobileMenu)}>
+               <Avatar src={CURRENT_USER.avatar} alt="Profile" size="sm" />
+             </div>
+             {showMobileMenu && (
+               <>
+                 <div className="fixed inset-0 z-40" onClick={() => setShowMobileMenu(false)}></div>
+                 <div className="absolute right-0 top-12 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 py-2 z-50 animate-in slide-in-from-top-2 origin-top-right">
+                   <div className="px-4 py-3 border-b border-gray-100">
+                     <p className="text-sm font-bold text-gray-900">{CURRENT_USER.name}</p>
+                     <p className="text-xs text-gray-500">See your profile</p>
+                   </div>
+                   <button onClick={() => { setView('profile'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                     <User className="w-5 h-5 mr-3 text-gray-400" /> Profile
+                   </button>
+                   <button onClick={() => { setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                     <Users className="w-5 h-5 mr-3 text-blue-500" /> Groups
+                   </button>
+                   <button onClick={() => { setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                     <Calendar className="w-5 h-5 mr-3 text-red-500" /> Events
+                   </button>
+                   <button onClick={() => { setView('profile'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                     <Bookmark className="w-5 h-5 mr-3 text-purple-500" /> Saved
+                   </button>
+                   <div className="border-t border-gray-100 my-1"></div>
+                   <button onClick={() => { setView('settings'); setShowMobileMenu(false); }} className="w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center">
+                     <Settings className="w-5 h-5 mr-3 text-gray-400" /> Settings & Privacy
+                   </button>
+                   <button className="w-full text-left px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center">
+                     <LogOut className="w-5 h-5 mr-3" /> Log Out
+                   </button>
+                 </div>
+               </>
+             )}
            </div>
         </div>
       </div>
