@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from './Card';
 import { Skeleton } from './Skeleton';
@@ -96,3 +97,68 @@ export const MessageItemSkeleton: React.FC = () => {
     </div>
   );
 };
+
+// --- Sidebar Skeleton ---
+export const SidebarSkeleton: React.FC = () => (
+  <div className="space-y-6 p-4">
+    <div className="flex items-center space-x-3 mb-6">
+      <Skeleton variant="circular" width={36} height={36} />
+      <Skeleton variant="text" width={100} height={16} />
+    </div>
+    <div className="space-y-4">
+      {[1,2,3,4,5].map(i => (
+        <div key={i} className="flex items-center space-x-3">
+          <Skeleton variant="circular" width={28} height={28} />
+          <Skeleton variant="text" width={120} height={14} />
+        </div>
+      ))}
+    </div>
+    <div className="border-t border-gray-100 pt-4 mt-4">
+      <Skeleton variant="text" width={80} height={14} className="mb-3" />
+      <div className="space-y-3">
+        <div className="flex items-center space-x-3">
+          <Skeleton variant="circular" width={28} height={28} />
+          <Skeleton variant="text" width={140} height={14} />
+        </div>
+        <div className="flex items-center space-x-3">
+          <Skeleton variant="circular" width={28} height={28} />
+          <Skeleton variant="text" width={140} height={14} />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+// --- Right Sidebar Skeleton ---
+export const RightSidebarSkeleton: React.FC = () => (
+  <div className="space-y-5">
+    <Card className="p-4">
+      <div className="flex justify-between items-center mb-3">
+        <Skeleton variant="text" width={100} height={14} />
+        <Skeleton variant="text" width={40} height={12} />
+      </div>
+      <div className="flex items-center space-x-3">
+        <Skeleton variant="rectangular" width={48} height={48} className="rounded-xl" />
+        <div className="space-y-2 flex-1">
+          <Skeleton variant="text" width="60%" height={14} />
+          <Skeleton variant="text" width="40%" height={12} />
+        </div>
+      </div>
+    </Card>
+    
+    <Card className="p-4">
+      <Skeleton variant="text" width={120} height={14} className="mb-4" />
+      <div className="space-y-4">
+        {[1,2].map(i => (
+          <div key={i} className="flex items-start space-x-3">
+            <Skeleton variant="circular" width={40} height={40} />
+            <div className="space-y-2 flex-1">
+              <Skeleton variant="text" width="70%" height={14} />
+              <Skeleton variant="text" width="50%" height={12} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  </div>
+);

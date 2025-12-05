@@ -4,8 +4,19 @@ import { MoreVertical, Search, Video } from 'lucide-react';
 import { Avatar } from '../common/Avatar';
 import { Button } from '../common/Button';
 import { HEALERS, TRENDING_TOPICS, UPCOMING_SESSIONS, CONVERSATIONS } from '../../data/index';
+import { RightSidebarSkeleton } from '../common/LoadingStates';
 
-export const RightSidebar: React.FC<{ setSelectedHealer: (h: any) => void, setView: (v: any) => void }> = ({ setSelectedHealer, setView }) => {
+export const RightSidebar: React.FC<{ setSelectedHealer: (h: any) => void, setView: (v: any) => void, isLoading?: boolean }> = ({ setSelectedHealer, setView, isLoading }) => {
+  if (isLoading) {
+    return (
+      <div className="hidden lg:block pr-2">
+        <div className="sticky top-6 h-[calc(100vh-80px)] overflow-y-auto no-scrollbar pl-2 pb-6">
+          <RightSidebarSkeleton />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="hidden lg:block pr-2">
       <div className="sticky top-6 h-[calc(100vh-80px)] overflow-y-auto no-scrollbar pl-2 pb-6 space-y-5">
@@ -90,7 +101,7 @@ export const RightSidebar: React.FC<{ setSelectedHealer: (h: any) => void, setVi
              <div key={c.id} className="flex items-center space-x-3 p-2 hover:bg-gray-200 rounded-lg cursor-pointer -mx-2 transition-colors group">
                <div className="relative">
                  <Avatar src={c.user.avatar} alt={c.user.name} size="sm" />
-                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#F0F2F5] group-hover:border-gray-200 rounded-full"></div>
+                 <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-50 border-2 border-[#F0F2F5] group-hover:border-gray-200 rounded-full"></div>
                </div>
                <span className="text-sm font-medium text-gray-900">{c.user.name}</span>
              </div>

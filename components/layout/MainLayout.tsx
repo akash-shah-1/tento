@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './Navbar';
 import { Sidebar } from './Sidebar';
 import { RightSidebar } from './RightSidebar';
@@ -17,6 +18,14 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
   // Determine if the current view needs full width (hiding the global right sidebar)
   // Added 'settings' to this list
   const isFullWidthPage = currentView === 'healers' || currentView === 'messages' || currentView === 'profile' || currentView === 'settings';
+  
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial shell load
+    const timer = setTimeout(() => setIsLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="h-screen w-full bg-[#F0F2F5] font-sans text-gray-900 flex flex-col overflow-hidden">
@@ -34,7 +43,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
            }`}>
               
               {/* Left Sidebar - Hidden on Mobile */}
-              <Sidebar currentUser={CURRENT_USER} currentView={currentView} setView={setView} />
+              <Sidebar currentUser={CURRENT_USER} currentView={currentView} setView={setView} isLoading={isLoading} />
               
               {/* Main Feed / Content Area */}
               <main className="min-w-0 px-2 md:px-0 h-full">
@@ -43,7 +52,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children, currentView, s
               
               {/* Right Sidebar - Only shown on Feed view */}
               {!isFullWidthPage && (
-                <RightSidebar setSelectedHealer={setSelectedHealer} setView={setView} />
+                <RightSidebar setSelectedHealer={setSelectedHealer} setView={setView} isLoading={isLoading} />
               )}
            </div>
         </div>
